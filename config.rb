@@ -7,6 +7,7 @@ activate :rouge_syntax
 
 activate :blog do |blog|
   blog.layout = "layout"
+  blog.prefix = "post"
   blog.tag_template = "tag.html"
   blog.calendar_template = "calendar.html"
 
