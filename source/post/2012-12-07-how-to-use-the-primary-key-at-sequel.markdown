@@ -43,7 +43,7 @@ vendor/bundle/ruby/1.9.1/gems/sequel-3.42.0/lib/sequel/model/base.rb:1775:in `bl
 
 うおっ、Luigiのidに3を指定することができない...
 
-<!-- more -->
+READMORE
 
 # unrestrict_primary_key
 

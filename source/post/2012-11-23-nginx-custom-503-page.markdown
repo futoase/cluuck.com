@@ -9,7 +9,6 @@ tags: [nginx, Server setting]
 
 ついうっかり、サイトのメンテナンス状態にするときにHTTP Status codeを200で返してしまう状態にしていて、メンテナンス状態の内容がGoogleにキャッシュされるようになってしまっていた。メンテナンス中はHTTP Status code 503を吐き出すようにしたい。
 
-<!-- more -->
 
 # nginxでのカスタム503ページ設定
 
@@ -19,6 +18,8 @@ tags: [nginx, Server setting]
 - /static 以下にはcss, js, jpg, pngなどの静的ファイルを置くが、そのリソースを要求しても503を返してはいけない
 
 以上の要求を満たす、nginxの設定ファイルの書き方は以下の通り。
+
+READMORE
 
 ```nginx 
 server {

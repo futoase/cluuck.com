@@ -27,7 +27,7 @@ Mockに対しspec引数に特定のオブジェクトを渡すとそのオブジ
 ...これだけじゃあ使い物になるかどうか判断つかないなーと思ってドキュメントを見行ったら、
 ら[create_autospec](http://docs.python.org/3/library/unittest.mock.html#unittest.mock.create_autospec)という便利なヘルパーがありました。
 
-<!-- more -->
+READMORE
 
 ```python
 >>> from unittest.mock import create_autospec

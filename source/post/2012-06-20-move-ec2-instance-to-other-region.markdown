@@ -33,7 +33,7 @@ PermitRootLogin yes
 
 - X.509秘密鍵及び証明書、及びEC2インスタンス作成時に利用しているcert-ec2.pem(証明書)を用意しておく
 
-<!-- more -->
+READMORE
 
 # 移動対象(移動元)のインスタンス内での作業
 ## AMIを作成する

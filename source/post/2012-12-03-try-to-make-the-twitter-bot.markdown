@@ -25,7 +25,7 @@ Twitterアプリケーションについては、[Twitter Developers](https://de
 
 [gem twitter](https://github.com/sferik/twitter)を利用すれば簡単に行えます。
 
-<!-- more -->
+READMORE
 
 gem twitterを利用しテスト用アカウントに対し書き込みのテストをします。
 書き込みのテストをする場合はアプリケーションの設定をRead & Writeにしなければならないことに注意をしてください。

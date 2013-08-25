@@ -57,7 +57,9 @@ function generate_digits_list($max=100)
 }
 ```
 
-generate_letters_listを呼び出してやるとランダムな文字列を生成する。文字列を生成してマッチングするかどうかとかは以下のようになる...
+READMORE
+
+generate letters listを呼び出してやるとランダムな文字列を生成する。文字列を生成してマッチングするかどうかとかは以下のようになる...
 
 ```plain:stdout
 is invalid 0cvIDbih

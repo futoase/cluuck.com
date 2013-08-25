@@ -16,7 +16,7 @@ Markdownで書いていくし、記事についてはgitで
 以下に簡単に構築手順を書いておく。オフィシャルにある
 [ドキュメント](http://octopress.org/docs/setup/)を参考にしながらやった。
 
-<!-- more -->
+READMORE
 
 ## 必要な環境
 

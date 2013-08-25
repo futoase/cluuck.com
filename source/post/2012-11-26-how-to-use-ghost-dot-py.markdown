@@ -17,7 +17,7 @@ Ghost.pyはPySide,PyQtどちらでも利用できるように書かれている�
     - Javascriptの実行もOK。
     - QtWebKitを利用してスクショが撮れます。
 
-<!-- more -->
+READMORE
 
 # Mac OS X で利用
 以下には、Mac OS X 10.8.2 Mountain Lion で利用するための手順を記載します。

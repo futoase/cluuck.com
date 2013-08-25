@@ -34,7 +34,7 @@ knockoutjs/output以下に２つのファイルが作成される。
 
 knockout-latest.debug.jsはminifyされていないものではあるのだが、今回はKnockout.jsを使ってみよう、ということなのでminifyされたjsを利用する。
 
-<!-- more -->
+READMORE
 
 ## Knockout.jsを使ってみる
 

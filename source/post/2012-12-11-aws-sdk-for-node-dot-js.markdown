@@ -23,7 +23,7 @@ node.jsのセットアップについては、各自ご自由に。
 > npm install aws-sdk
 ```
 
-<!-- more -->
+READMORE
 
 # S3にオブジェクトをアップロードするテスト
 

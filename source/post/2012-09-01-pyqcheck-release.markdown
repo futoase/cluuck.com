@@ -21,6 +21,8 @@ tags: [python, Quick Check]
 
   適当なテストスクリプトについては以下にありますが、例を書いてみましょう。
 
+READMORE
+
 ```python
 from pyqcheck.pyqcheck import PyQCheck, set_arbitrary
 

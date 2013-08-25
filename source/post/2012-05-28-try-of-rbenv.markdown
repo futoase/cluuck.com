@@ -18,11 +18,11 @@ rubyだと[rvm](https://rvm.io/)かなーということぐらいしか知らな
 とある人からrvmじゃなくてrbenvがいいよと言われたので
 rbenvを入れてみた。
 
-<!-- more -->
-
 - [rbenv](https://github.com/sstephenson/rbenv)
 
 …MacOS Xな環境であればhomebrewを利用すればすぐに利用できる。
+
+READMORE
 
 ```plain
 $ brew install rbenv

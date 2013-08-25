@@ -13,6 +13,8 @@ tags: [git, git flow]
 会社で[git flow](https://github.com/nvie/gitflow)を利用したリリース手順・サイクルを繰り返しているのですが、
 正しいのかどうなのかを確認したいため、まとめてみたいと思います。
 
+READMORE
+
 # git flow とは
 
 gitのbranch作成戦略の一つの手、というかテンプレートです。

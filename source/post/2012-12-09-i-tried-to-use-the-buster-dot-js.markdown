@@ -20,7 +20,7 @@ Buster.jsが良いというプレゼンを見たので、試しにいじって�
 npm install -g buster
 ```
 
-<!-- more -->
+READMORE
 
 ## 最低限の動作テストを書く
 

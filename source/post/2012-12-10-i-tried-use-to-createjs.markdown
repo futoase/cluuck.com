@@ -16,6 +16,8 @@ tags: [Advent Calendar 2012, JavaScript, CreateJS]
 [PreloadJS](http://www.createjs.com/#!/PreloadJS)、
 それぞれのライブラリをまとめたものになっています。
 
+READMORE
+
 ## EaselJS
 
 Canvasを扱い、オブジェクトのアニメーションを簡単に扱えるようにするものです。

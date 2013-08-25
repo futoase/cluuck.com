@@ -48,7 +48,7 @@ redis-serverコマンドによってredisを起動します。
 
 いつの間にAAがでるように...
 
-<!-- more -->
+READMORE
 
 起動したので、redis-clientを利用して起動してみます。
 

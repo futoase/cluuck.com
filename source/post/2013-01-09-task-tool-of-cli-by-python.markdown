@@ -14,7 +14,7 @@ tags: [Python, pynt]
 って思って探したら[pynt](https://github.com/rags/pynt)というものを見つけました。
 ということで早速使ってみます。
 
-<!-- more -->
+READMORE
 
 # pyntをインストールする
 

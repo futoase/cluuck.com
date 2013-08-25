@@ -37,11 +37,11 @@ tags: [Scala, PlayFramework, Programming]
        - O/RM といえるほどの抽象化はされていない
        - ほぼ生のSQLを書く必要がある
 
-<!-- more -->
-
 # PlayFrameworkのインストール
 
 MacOS Lionを基準に話を進めてしまう。
+
+READMORE
 
 1. [Homebrew](http://mxcl.github.com/homebrew/)をインストールする
 2. brew install scala を実行し、Scalaをインストールする

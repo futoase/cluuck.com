@@ -21,7 +21,7 @@ tags: [Advent Calendar 2012, facebook, OAuth, Ruby]
 職場で教えてもらったりしました。OAuthトークンを元にしたアプリケーション情報の取得については
 [Step 2. Make Requests to the API項](https://developers.facebook.com/docs/howtos/login/login-as-app/)に書かれています。
 
-<!-- more -->
+READMORE
 
 # 試してみる
 

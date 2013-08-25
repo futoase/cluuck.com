@@ -34,7 +34,7 @@ tags: [tuningathon, Ruby On Rails, Infrastructure]
 
 以下、計測スクリプトで都度パフォーマンス計測をしながら改善を行った結果を書き出します。
 
-<!-- more -->
+READMORE
 
 1. webrickを利用して計測した結果
 

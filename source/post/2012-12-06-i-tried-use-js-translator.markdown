@@ -16,7 +16,7 @@ Googleが出した[Dart](http://www.dartlang.org/)、DeNAが出した[JSX](http:
 この前Twitterのタイムラインで[List-of-languages-that-compile-to-JS](https://github.com/jashkenas/coffee-script/wiki/List-of-languages-that-compile-to-JS)というCoffeeScript-github-repositoryのwikiにある記事へのリンクが流れていたので、
 色々あるんだなぁと感心しました。
 
-<!-- more -->
+READMORE
 
 # せっかくなので
 

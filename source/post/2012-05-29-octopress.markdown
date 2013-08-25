@@ -15,6 +15,8 @@ octopressについてリポジトリをgit cloneして、そのあとrake setup 
 2. octopressローカルリポジトリよりgit add remoteを行い、sourceブランチを(1)で作成したリポジトリにpushする
 3. rake setup_github_pages で、念の為にdeploy先をfutoase.github.comにする
 
+READMORE
+
 ```plain
 $ cd octopress # octopressをgit cloneしたディレクトリ
 $ git add remote backup git@github.com:futoase/futoase.github.com.source.git
