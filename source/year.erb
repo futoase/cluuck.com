@@ -1,20 +1,10 @@
-<!doctype html>
-<html>
-  <%= partial "site_header" %>
-  <body>
-    <%= partial "header" %>
-
-    <div id="container">
-      <aside>
-        <h2>By Year</h2>
-        <ol>
-          <% blog.articles.group_by {|a| a.date.year }.each do |year, articles| %>
-            <li><%= link_to year, blog_year_path(year) %> (<%= articles.size %>)</a></li>
-          <% end %>
-        </ol>
-      </aside>
-    </div>
-
-    <%= partial "footer" %>
-  </body>
-</html>
+<div id="container">
+  <aside>
+    <h2>By Year</h2>
+    <ol>
+      <% blog.articles.group_by {|a| a.date.year }.each do |year, articles| %>
+        <li><%= link_to year, blog_year_path(year) %> (<%= articles.size %>)</a></li>
+      <% end %>
+    </ol>
+  </aside>
+</div>

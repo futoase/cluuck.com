@@ -17,10 +17,6 @@ activate :blog do |blog|
 end
 
 page "/feed.xml", :layout => false
-page "/articles.html", :layout => "articles"
-page "/tags.html", :layout => "tags"
-page "/year.html", :layout => "year"
-page "/me.html", :layout => "me"
 
 set :css_dir, 'stylesheets'
 set :js_dir, 'javascripts'
