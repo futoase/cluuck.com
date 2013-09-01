@@ -9,7 +9,7 @@ env:
     - GIT_AUTHOR_EMAIL=futoase@gmail.com
     - secure: FvVzjPyNUC2sE/HSouqPhDfsehoG8VUvMSgH6Qm14OXSUCAGJAno5gy0TznGr2cV3P20yUgM9l6DD8XJl60vzcSoWg98y/djZQHYdxSwYZoXdY4ZmGS0dmnR4wxaqM65unrDwCi2iuOON+1M3COpgX7Pw7uOKHnjrwnEqVCaOhs=
 before_script:
-  - git clone --quiet git@github.com:futoase/futoase.github.io.git
+  - git clone --quiet https://github.com/futoase/futoase.github.io.git
   - pushd build
   - git checkout -b gh-pages
   - popd
