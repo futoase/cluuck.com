@@ -1,6 +1,6 @@
 ---
 language: ruby
-script: bundle exec middleman build
+rvm: 2.0.0
 env:
   global:
     - GIT_COMMITER_NAME=Keiji Matsuzaki
@@ -13,9 +13,9 @@ before_script:
   - pushd build
   - git checkout -b gh-pages
   - popd
-
+script: bundle exec middleman build
 after_success:
   - cd build
   - git add -A
   - git commit -m 'Update!'
-  - '[ "$TRAVIS_BRANCH" == "master" ] && [ $GH_TOKEN ] && git push --quiet https://$GH_TOKEN@github.com/futoase/futoase.github.io.git gh-pages 2> /dev/null'
+  - '[ "$TRAVIS_BRANCH" == "master" ] && [ $GH_TOKEN ] && git push --quiet https://$GH_TOKEN@github.com/futoase/futoase.github.io gh-pages 2> /dev/null'
