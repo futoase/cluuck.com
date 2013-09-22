@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - unittest.mock</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>unittest.mock</h1>
+
+<p>Python 3.3から<a href="http://docs.python.org/3/library/unittest.mock.html">unittest.mock</a>というライブラリが追加されたという話が
+<a href="http://togetter.com/li/412188">pyfes 2012.11</a>であったのでちょっとだけ触ってみます。</p>
+<pre class="highlight python"><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">Mock</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">con</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">con</span>
+<span class="o">&lt;</span><span class="n">Mock</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;mock.connect()&#39;</span> <span class="nb">id</span><span class="o">=</span><span class="s">&#39;4492027600&#39;</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cur</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cur</span>
+<span class="o">&lt;</span><span class="n">Mock</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;mock.connect().cursor()&#39;</span> <span class="nb">id</span><span class="o">=</span><span class="s">&#39;4492027920&#39;</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;SELECT * FROM test&#39;</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">Mock</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;mock.connect().cursor().execute()&#39;</span> <span class="nb">id</span><span class="o">=</span><span class="s">&#39;4492028304&#39;</span><span class="o">&gt;</span>
+</pre>
+<p>Mockに対しspec引数に特定のオブジェクトを渡すとそのオブジェクトの振る舞いをします。
+&hellip;これだけじゃあ使い物になるかどうか判断つかないなーと思ってドキュメントを見行ったら、
+ら<a href="http://docs.python.org/3/library/unittest.mock.html#unittest.mock.create_autospec">create_autospec</a>という便利なヘルパーがありました。</p>
+
+<p></p>
+<pre class="highlight python"><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">create_autospec</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="k">def</span> <span class="nf">test_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">):</span>
+<span class="o">...</span>   <span class="k">return</span> <span class="mi">100</span>
+<span class="o">...</span> 
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock_func</span> <span class="o">=</span> <span class="n">create_autospec</span><span class="p">(</span><span class="n">test_func</span><span class="p">,</span> <span class="n">return_value</span><span class="o">=</span><span class="mi">555</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock_func</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="mi">555</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock_func</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+  <span class="n">File</span> <span class="s">&quot;&lt;string&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">2</span><span class="p">,</span> <span class="ow">in</span> <span class="n">test_func</span>
+<span class="n">TypeError</span><span class="p">:</span> <span class="o">&lt;</span><span class="k">lambda</span><span class="o">&gt;</span><span class="p">()</span> <span class="n">missing</span> <span class="mi">2</span> <span class="n">required</span> <span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span> <span class="s">&#39;b&#39;</span> <span class="ow">and</span> <span class="s">&#39;c&#39;</span>
+</pre>
+<p>関数のフックを行うことができ、これは便利そうだなと思いました。
+また、Mockインスタンスのside<em>effectメソッドに値を渡すと、
+インスタンスを呼び出した(.</em><em>call</em><em>風に)場合は渡した値がリストであればイテレータ的に、例外を渡せば例外を吐いてくれたりするようになります。
+関数を渡した場合は引数をside</em>effectに渡した関数に引き当てて実行します。</p>
+<pre class="highlight python"><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">Mock</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock</span><span class="p">()</span>
+<span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock</span><span class="p">()</span>
+<span class="mi">2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock</span><span class="p">()</span>
+<span class="mi">3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock</span><span class="p">()</span>
+<span class="mi">4</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock</span><span class="p">()</span>
+<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+  <span class="n">File</span> <span class="s">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+  <span class="n">File</span> <span class="s">&quot;/Users/matsuzakikeiji/local/Python-3.3.0/lib/python3.3/unittest/mock.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">846</span><span class="p">,</span> <span class="ow">in</span> <span class="n">__call__</span>
+    <span class="k">return</span> <span class="n">_mock_self</span><span class="o">.</span><span class="n">_mock_call</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  <span class="n">File</span> <span class="s">&quot;/Users/matsuzakikeiji/local/Python-3.3.0/lib/python3.3/unittest/mock.py&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">904</span><span class="p">,</span> <span class="ow">in</span> <span class="n">_mock_call</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">effect</span><span class="p">)</span>
+<span class="n">StopIteration</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock</span> <span class="o">=</span> <span class="n">Mock</span><span class="p">(</span><span class="n">side_effect</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">v</span> <span class="p">:</span> <span class="n">v</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="mi">200</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">mock</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="mi">2000</span>
+</pre>
+<p>unittest.mockのオブジェクトを見る限り、
+自分自身で便利なモックオブジェクトが作れたり、
+<a href="http://docs.python.org/3/library/unittest.mock.html#unittest.mock.Mock.assert_called_with">テストをしやすい用にヘルパーが用意されている</a>ので
+色々と触ったほうがいいと思います。</p>
+
+<p>ただ今のこのエントリだと何に使えてどういう便利な使い方があるのか、が表現できていないしひどいものだなぁと思うので後日補足します。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

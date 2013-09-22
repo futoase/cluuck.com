@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - I tried use to CreateJS</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>CreateJS</h1>
+
+<p><a href="http://www.createjs.com/">CreateJS</a>というライブラリをAtariが作成した、
+というニュースが今年に夏にありました。</p>
+
+<p><a href="http://www.createjs.com/#!/EaselJS">EaselJS</a>、
+<a href="http://www.createjs.com/#!/TweenJS">TweenJS</a>、 
+<a href="http://www.createjs.com/#!/SoundJS">SoundJS</a>、
+<a href="http://www.createjs.com/#!/PreloadJS">PreloadJS</a>、
+それぞれのライブラリをまとめたものになっています。</p>
+
+<p></p>
+
+<h2>EaselJS</h2>
+
+<p>Canvasを扱い、オブジェクトのアニメーションを簡単に扱えるようにするものです。</p>
+
+<h2>TweenJS</h2>
+
+<p>オブジェクトのアニメーションを簡単に扱えるようにするものです。</p>
+
+<h2>SoundJS</h2>
+
+<p>サウンドに関してのライブラリです。
+複数のブラウザに関して扱いに問題がでないように吸収された作りになっています。</p>
+
+<h2>PreloadJS</h2>
+
+<p>画像のあと読み込みを行うためのライブラリです。</p>
+
+<h1>PreloadJSについて触ってみる</h1>
+
+<p>時間がないため、PreloadJSについて触ってみます。
+<a href="https://github.com/CreateJS/PreloadJS/blob/master/README.md">PreloadJSリポジトリのREADME.md</a>に書かれているサンプルを参考にします。</p>
+<pre class="highlight html"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;title&gt;</span>CreateJS Test<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;UTF-8&quot;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;//raw.github.com/CreateJS/PreloadJS/02997fbd4c4139b4bd7cde1d7efe0e9210739095/lib/preloadjs-0.1.0.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+
+    <span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">preload</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PreloadJS</span><span class="p">();</span>
+        <span class="nx">preload</span><span class="p">.</span><span class="nx">onFileLoad</span> <span class="o">=</span> <span class="nx">loadComplete</span><span class="p">;</span>
+        <span class="kd">function</span> <span class="nx">loadComplete</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#preload-image&quot;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">result</span><span class="p">);</span>
+        <span class="p">};</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#preload-button&quot;</span><span class="p">).</span><span class="nx">click</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+          <span class="nx">preload</span><span class="p">.</span><span class="nx">loadFile</span><span class="p">(</span><span class="s1">&#39;https://dl.dropbox.com/u/614755/futoase.github.com/i-tried-to-use-the-create-js/test.png&#39;</span><span class="p">);</span> 
+        <span class="p">});</span>
+      <span class="p">});</span>
+    <span class="nt">&lt;/script&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;div&gt;</span>
+      <span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">&quot;preload-button&quot;</span><span class="nt">&gt;</span>Preload!<span class="nt">&lt;/button&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;preload-image&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre>
+<p><a href="https://dl.dropbox.com/u/614755/futoase.github.com/i-tried-to-use-the-create-js/test.html">ここのページ</a>を開いて、Preloadボタンを押すとイメージが後読みされます。</p>
+
+<p>※PreloadJS、CDNに2.0でminifyされたものがあるのですがloadするとPreloadJSを初期化することができなくなっていました&hellip;あとで確認。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

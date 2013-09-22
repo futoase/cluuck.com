@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - ctype_digit vs preg_match</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>ctype digit と preg matchでの文字列比較速度</h1>
+
+<p>そういやctype_digitのほうが早いみたいなの言われていないっけ、と思ったので確認してみた。</p>
+
+<h1>スクリプトの準備</h1>
+
+<p>ランダムな文字列を生成するロジックを用意する。文字列判定のためだけに利用する単純な奴。</p>
+<pre class="highlight php"><span class="cp">&lt;?php</span>
+
+<span class="k">function</span> <span class="nf">generate_random_strings</span><span class="p">(</span><span class="nv">$type</span><span class="o">=</span><span class="s1">&#39;letters&#39;</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">switch</span><span class="p">(</span><span class="nv">$type</span><span class="p">){</span>
+      <span class="k">case</span> <span class="s1">&#39;digits&#39;</span><span class="o">:</span>
+        <span class="nv">$asset</span> <span class="o">=</span> <span class="s1">&#39;0123456789&#39;</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="s1">&#39;letters&#39;</span><span class="o">:</span>
+      <span class="k">default</span><span class="o">:</span>
+        <span class="nv">$asset</span> <span class="o">=</span> <span class="s1">&#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&#39;</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$length</span> <span class="o">=</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$asset</span><span class="p">);</span>
+    <span class="nv">$max</span> <span class="o">=</span> <span class="nb">rand</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">32</span><span class="p">);</span>
+    <span class="nv">$result</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="k">for</span><span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$max</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">){</span>
+        <span class="nb">array_push</span><span class="p">(</span><span class="nv">$result</span><span class="p">,</span> <span class="nv">$asset</span><span class="p">[</span><span class="nb">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$length</span><span class="o">-</span><span class="mi">1</span><span class="p">)]);</span> 
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nb">implode</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="nf">generate_list</span><span class="p">(</span><span class="nv">$max</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="nv">$type</span><span class="o">=</span><span class="s1">&#39;letters&#39;</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="nv">$result</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+  <span class="k">for</span><span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$max</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">){</span>
+    <span class="nb">array_push</span><span class="p">(</span><span class="nv">$result</span><span class="p">,</span> <span class="nx">generate_random_strings</span><span class="p">(</span><span class="nv">$type</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$result</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="nf">generate_letters_list</span><span class="p">(</span><span class="nv">$max</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="nx">generate_list</span><span class="p">(</span><span class="nv">$max</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="nf">generate_digits_list</span><span class="p">(</span><span class="nv">$max</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="nx">generate_list</span><span class="p">(</span><span class="nv">$max</span><span class="p">,</span> <span class="s1">&#39;digits&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p></p>
+
+<p>generate letters listを呼び出してやるとランダムな文字列を生成する。文字列を生成してマッチングするかどうかとかは以下のようになる&hellip;</p>
+<pre class="highlight text">is invalid 0cvIDbih
+is invalid oD6MJS9zbgVqpg8po14Md
+is invalid DfAbJC
+is invalid Qcyk8aTR
+is invalid iTg4avb8Lp0G13Lu9bwIDGpG5zF6jn6s
+is invalid cn7xo69EWFvQgQPidoMKDjF3OBc2xvZ
+is invalid IWXWSWqEsMlzt1Iw
+is invalid l6JuCC
+is invalid 3F1r0QQyDEllrCQJe19ySHUYSRxdj0cd
+is invalid 4umLaLfFWqWo7v
+is invalid YuRH2CvLkSOuI
+is invalid x4MRhnSSsnEJ9TGvduQV2Jnn
+is invalid y6YSEFfz
+is invalid XGvFoOT
+is invalid nTDUeGfVr7uFkE4gtMLZSa6FH
+is invalid aW6UGkD94IG9
+is invalid X6OthjnnC0ZsI
+is invalid odxHekEYQOrPI0lIj9FYtM8H0AxP
+is invalid 5F893Fdd92TOkzmaLVkLq8526
+is invalid SxZyhU4fTXKX1KPLoa
+is valid 3634128239310
+is valid 455261892945378
+is valid 021362545948052518
+is valid 796615068753784147792731794
+is valid 0217273423111
+is valid 494909688952031472789953
+is valid 875982376386975
+is valid 38970342022085362851099727425
+is valid 18806830042341887073182165907408
+is valid 8997398721239
+is valid 108426
+is valid 32223974803700198920169
+is valid 7002268690
+is valid 30679607618607909691301628498
+is valid 816495003711419328919
+is valid 219404480207603
+...
+</pre>
+<!-- more -->
+
+<h1>ctype_digitsでの計測スクリプト</h1>
+<pre class="highlight php"><span class="cp">&lt;?php</span>
+
+<span class="k">require_once</span><span class="p">(</span><span class="s1">&#39;string_generator.php&#39;</span><span class="p">);</span>
+
+<span class="k">function</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">$variables</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">foreach</span><span class="p">(</span><span class="nv">$variables</span> <span class="k">as</span> <span class="nv">$v</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">ctype_digit</span><span class="p">(</span><span class="nv">$v</span><span class="p">)){</span>
+      <span class="k">echo</span> <span class="s2">&quot;is valid &quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span><span class="p">{</span>
+      <span class="k">echo</span> <span class="s2">&quot;is invalid &quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">echo</span> <span class="nv">$v</span> <span class="o">.</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">validate</span><span class="p">(</span><span class="nx">generate_letters_list</span><span class="p">(</span><span class="mi">100000</span><span class="p">));</span>
+<span class="nx">validate</span><span class="p">(</span><span class="nx">generate_digits_list</span><span class="p">(</span><span class="mi">100000</span><span class="p">));</span>
+</pre>
+<h1>preg_matchでの計測スクリプト</h1>
+<pre class="highlight php"><span class="cp">&lt;?php</span>
+
+<span class="k">require_once</span><span class="p">(</span><span class="s1">&#39;string_generator.php&#39;</span><span class="p">);</span>
+
+<span class="k">function</span> <span class="nf">validate</span><span class="p">(</span><span class="nv">$variables</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">foreach</span><span class="p">(</span><span class="nv">$variables</span> <span class="k">as</span> <span class="nv">$v</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;/^[0-9]+$/&#39;</span><span class="p">,</span> <span class="nv">$v</span><span class="p">)</span> <span class="o">!==</span> <span class="mi">0</span><span class="p">){</span>
+      <span class="k">echo</span> <span class="s2">&quot;is valid &quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span><span class="p">{</span>
+      <span class="k">echo</span> <span class="s2">&quot;is invalid &quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">echo</span> <span class="nv">$v</span> <span class="o">.</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nx">validate</span><span class="p">(</span><span class="nx">generate_letters_list</span><span class="p">(</span><span class="mi">100000</span><span class="p">));</span>
+<span class="nx">validate</span><span class="p">(</span><span class="nx">generate_digits_list</span><span class="p">(</span><span class="mi">100000</span><span class="p">));</span>
+</pre>
+<p>まあ、どっちもどっちで変わらないですよね。比較の箇所しか違わない。生成する数も100,000と変わらない。</p>
+
+<h1>計測結果</h1>
+
+<p>以下の環境で計測した。</p>
+
+<ul>
+<li>MacOS X 10.7 Lion
+
+<ul>
+<li>2011 Mid model</li>
+<li>CPU Core i7(Sandy) 2core 4thread</li>
+<li>Memory 4GB</li>
+<li>SSD 256GB</li>
+</ul></li>
+<li>PHP
+
+<ul>
+<li>Version 5.3.10 (古い&hellip;)</li>
+</ul></li>
+<li>iTerm2上でコマンドを実行
+
+<ul>
+<li>screenやtmuxは使わず、別タブを開き単独のプロセスとして動作させる<br></li>
+</ul></li>
+</ul>
+
+<h2>ctype_digit での計測結果</h2>
+<pre class="highlight text"># 1回目
+php ctype_digit_count.php  4.05s user 0.74s system 84% cpu 5.697 total
+# 2回目
+php ctype_digit_count.php  4.06s user 0.62s system 85% cpu 5.461 total
+# 3回目
+php ctype_digit_count.php  4.00s user 0.62s system 85% cpu 5.410 total
+</pre>
+<h2>preg_match での計測結果</h2>
+<pre class="highlight text"># 1回目
+php preg_match_count.php  4.46s user 0.66s system 87% cpu 5.851 total
+# 2回目
+php preg_match_count.php  4.38s user 0.66s system 86% cpu 5.857 total
+# 3回目
+php preg_match_count.php  4.34s user 0.65s system 86% cpu 5.778 total
+</pre>
+<p>変わらない&hellip; 若干preg_matchのほうが遅いかなぁってところだけど、チェックするための生成文字列リストの量を考えると、この程度の差って変わらないと言えるよなぁ&hellip;</p>
+
+<h1>結論</h1>
+
+<p>測定方法がまずいのかと思い、オーバーヘッドが出ることを承知でPearのBenchmarkパッケージを利用して計測してみたのだけどそれでも変わらなかった。ctype_digitについては&quot;渡された文字列がすべて数値であればtrueを返すことを保証する&quot;という関数であるということだけ頭におけばよい、早いとか最適とか色々と他のBlogで書かれているけど、そんなことなかったのか&hellip;リストの生成コストやforeachによるリストのイテレーション速度とか、echoの標準出力への転送とか、改行コードと文字列の連結とか、色々コストかかるところはあるが同一だし、そこで大きな差がないというのがなぁ。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

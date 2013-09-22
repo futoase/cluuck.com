@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Blog Name</title>
+  <subtitle>Blog subtitle</subtitle>
+  <id>http://blog.url.com/</id>
+  <link href="http://blog.url.com/"/>
+  <link href="http://blog.url.com/feed.xml" rel="self"/>
+  <updated>2013-09-22T06:35:00Z</updated>
+  <author>
+    <name>Blog Author</name>
+  </author>
+  <entry>
+    <title>improvement of blog template</title>
+    <link rel="alternate" href="/post/2013/09/22/improvment-of-blog-template.html"/>
+    <id>/post/2013/09/22/improvment-of-blog-template.html</id>
+    <published>2013-09-22T06:35:00Z</published>
+    <updated>2013-09-22T06:35:00Z</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;p&gt;&lt;a href="https://github.com/futoase/cluuck.com/commit/a22a2d48f7a4b06c21fd5545dc0de0988852660a"&gt;ブログテンプレートを改善&lt;/a&gt;して、titleタグにエントリのタイトルを入れるようにした。
+はてブするときに入るようになったしよかった。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>python guide</title>
+    <link rel="alternate" href="/post/2013/09/18/python-guide.html"/>
+    <id>/post/2013/09/18/python-guide.html</id>
+    <published>2013-09-18T00:00:00Z</published>
+    <updated>2013-09-18T00:00:00Z</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;h1&gt;Python Guide&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/trending?l=python"&gt;Trending Python repositories on Github today&lt;/a&gt;のフィードを見ていたら、python-guideを見つけた。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/kennethreitz/python-guide"&gt;python-guide&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;結構前から(2011年から)あったプロダクトのようだけど、知らなかった。&lt;/p&gt;
+
+&lt;p&gt;成果物は既にあって、&lt;a href="http://docs.python-guide.org/en/latest/"&gt;The Hitchhiker&amp;rsquo;s Guide to Python!&lt;/a&gt;という題目でまとまってる。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://docs.python-guide.org/en/latest/#writing-great-code"&gt;Writing Great Code&lt;/a&gt;を見てみると、コーディングスタイルなどPythonの基本的な記法が載ってる。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href="http://docs.python-guide.org/en/latest/#scenario-guide"&gt;Scenario Guide&lt;/a&gt;を見てみると、WebServerやシステム構成のためのライブラリなどが載っている。&lt;/p&gt;
+
+&lt;p&gt;まだ抜けている部分があるけれど、何を探せばいいのかググってどうにかするよりも情報がまとまっているし、
+載っているライブラリを見ても(項目だけだとしても)よく使われるものだったりするので、
+Pythonを覚えたい人にこのサイトを薦めるのは良いのかもと思ったりする。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>TravisCI auto Use of Middlemanleman</title>
+    <link rel="alternate" href="/post/2013/09/03/use-of-middleman.html"/>
+    <id>/post/2013/09/03/use-of-middleman.html</id>
+    <published>2013-09-02T17:00:00Z</published>
+    <updated>2013-09-02T17:00:00Z</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;h1&gt;TravisCIとMiddlemanの連携&lt;/h1&gt;
+
+&lt;p&gt;色々とネット上で連携してみた、という
+エントリが出てきていたので、試しにやってみた。
+&lt;code&gt;gh-pages branch&lt;/code&gt; については&amp;ndash;orphanオプションで親無しのブランチを作成して
+予め用意しておくぐらい。&lt;/p&gt;
+
+&lt;p&gt;あとは、&lt;a href="http://tricknotes.hateblo.jp/entry/2013/06/17/020229"&gt;Middleman で作った web サイトを Travis + GitHub pages でお手軽に運用する&lt;/a&gt;を参考に.travis.ymlを書いて、
+TravisCIでリポジトリを監視対象にして、終わり。&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip;&lt;code&gt;GIT_COMMITTER_NAME&lt;/code&gt; , &lt;code&gt;GIT_COMMITTE_EMAIL&lt;/code&gt; をtypoしてて
+&lt;code&gt;git commit&lt;/code&gt; が反映されず、1日ハマってた。。。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Change from Octprecss to Middleman</title>
+    <link rel="alternate" href="/post/2013/08/25/change-from-octopress-to-middleman.html"/>
+    <id>/post/2013/08/25/change-from-octopress-to-middleman.html</id>
+    <published>2013-08-25T05:10:00Z</published>
+    <updated>2013-08-25T05:10:00Z</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;h1&gt;OctopressからMiddlemanに乗り換え&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href="http://middlemanapp.com/"&gt;Middleman&lt;/a&gt;という
+静的コンテンツを作成するためのフレームワークがあり、
+ちらほらと&lt;a href="http://octopress.org/"&gt;Octopress&lt;/a&gt;からMiddlemanに乗り換えたという
+事例をみかけたし、そもそも気になっていたので、変えてみた。&lt;/p&gt;
+
+&lt;p&gt;特に不都合なく乗り換えられた。
+Octopressよりは、レイアウトのファイルについて
+構造をつかみやすいので、レイアウト修正は楽だった。&lt;/p&gt;
+
+&lt;p&gt;もう少し記事をマトモに読める形にデザインをカスタマイズしていきたい。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>Task tool of cli by python</title>
+    <link rel="alternate" href="/post/2013/01/09/task-tool-of-cli-by-python.html"/>
+    <id>/post/2013/01/09/task-tool-of-cli-by-python.html</id>
+    <published>2013-01-09T07:47:00Z</published>
+    <updated>2013-01-09T07:47:00Z</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;h1&gt;PythonでRakeみたいなものがほしい&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href="http://www.scons.org/"&gt;Scons&lt;/a&gt;や&lt;a href="http://code.google.com/p/waf/"&gt;waf&lt;/a&gt;などのビルドツールがあるけど、なんかRakeとは違う。
+ソフトウェアをビルドする用途のものだし、タスクを実行するようなものではない。
+&lt;a href="http://paver.github.com/paver/"&gt;paver&lt;/a&gt;はタスクを登録して実行できるようだけど、setuputils風の関数に設定を書いたりとかちょっと面倒そう。
+&lt;a href="https://github.com/alexcepoi/cake"&gt;Cake&lt;/a&gt;はそこそこ良いけどもうちょっと簡単なものがないかな、
+って思って探したら&lt;a href="https://github.com/rags/pynt"&gt;pynt&lt;/a&gt;というものを見つけました。
+ということで早速使ってみます。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;h1&gt;pyntをインストールする&lt;/h1&gt;
+
+&lt;h2&gt;Python 2.xをご利用の方々&lt;/h2&gt;
+
+&lt;p&gt;PyPIに登録されているので、以下のコマンドを実行するだけでOK。&lt;/p&gt;
+&lt;pre class="highlight text"&gt;&amp;gt; pip install pynt
+&lt;/pre&gt;
+&lt;p&gt;または&lt;/p&gt;
+&lt;pre class="highlight text"&gt;&amp;gt; easy_install pynt
+&lt;/pre&gt;
+&lt;h2&gt;Python 3.3をご利用の方々&lt;/h2&gt;
+
+&lt;p&gt;forkしてPython 3.3に対応させました。
+&lt;a href="https://github.com/futoase/pynt"&gt;ここのリポジトリ&lt;/a&gt;をcloneし、
+対応branchをcheckoutしてもらえるだけでOKです。&lt;/p&gt;
+&lt;pre class="highlight text"&gt;&amp;gt; git clone git://github.com/futoase/pynt.git
+&amp;gt; cd pynt
+&amp;gt; git checkout -b support-of-the-python3.3 origin/support-of-the-python3.3
+&amp;gt; python setup.py install
+&lt;/pre&gt;
+&lt;h1&gt;pyntを使ってtaskを構築する&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href="https://github.com/futoase/pynt/blob/support-of-the-python3.3/example.py"&gt;example.py&lt;/a&gt;を参考に、taskを作ってみましょう。&lt;/p&gt;
+&lt;pre class="highlight python"&gt;&lt;span class="c"&gt;#!/usr/bin/env python&lt;/span&gt;
+&lt;span class="c"&gt;# -*- coding:utf-8 -*-&lt;/span&gt;
+
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;sys&lt;/span&gt;
+&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;os&lt;/span&gt;
+&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;pynt&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;task&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;build&lt;/span&gt;
+
+&lt;span class="nd"&gt;@task&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;whoami&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;os&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;system&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;whoami&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+
+&lt;span class="nd"&gt;@task&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;one&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;one&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="nd"&gt;@task&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;one&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;two&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;two&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="nd"&gt;@task&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;two&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;three&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="k"&gt;print&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s"&gt;&amp;#39;three&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="n"&gt;__name__&lt;/span&gt; &lt;span class="o"&gt;==&lt;/span&gt; &lt;span class="s"&gt;&amp;#39;__main__&amp;#39;&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+    &lt;span class="n"&gt;build&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;modules&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="n"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt; &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;argv&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;:])&lt;/span&gt;
+&lt;/pre&gt;
+&lt;p&gt;以上のスクリプトに対し、実行権限(chmod +x)を付けて、叩いてみます。&lt;/p&gt;
+&lt;pre class="highlight text"&gt;&amp;gt; ./test_task.py 
+usage: test_task.py [-h] [-l] [task [task ...]]
+
+positional arguments:
+  task              perform specified task and all it&amp;#39;s dependancies
+
+optional arguments:
+  -h, --help        show this help message and exit
+  -l, --list-tasks  List the tasks
+
+
+Tasks in build file ./test_task.py:
+  one                   
+  three                 
+  two                   
+  whoami  
+&lt;/pre&gt;
+&lt;p&gt;Tasks in build file&amp;hellip; にてtask一覧が出たので、試しにtaskを実行してみます。&lt;/p&gt;
+&lt;pre class="highlight text"&gt;&amp;gt; ./test_task.py whoami                                                
+[ test_task.py - Starting task &amp;quot;whoami&amp;quot; ]
+matsuzakikeiji
+0
+[ test_task.py - Completed task &amp;quot;whoami&amp;quot; ]
+
+&amp;gt; ./test_task.py one                                 
+[ test_task.py - Starting task &amp;quot;one&amp;quot; ]
+one
+[ test_task.py - Completed task &amp;quot;one&amp;quot; ]
+&amp;gt; ./test_task.py two                    
+[ test_task.py - Starting task &amp;quot;one&amp;quot; ]
+one
+[ test_task.py - Completed task &amp;quot;one&amp;quot; ]
+[ test_task.py - Starting task &amp;quot;two&amp;quot; ]
+two
+[ test_task.py - Completed task &amp;quot;two&amp;quot; ]
+&amp;gt; ./test_task.py three 
+[ test_task.py - Starting task &amp;quot;one&amp;quot; ]
+one
+[ test_task.py - Completed task &amp;quot;one&amp;quot; ]
+[ test_task.py - Starting task &amp;quot;two&amp;quot; ]
+two
+[ test_task.py - Completed task &amp;quot;two&amp;quot; ]
+[ test_task.py - Starting task &amp;quot;three&amp;quot; ]
+three
+[ test_task.py - Completed task &amp;quot;three&amp;quot; ]
+&lt;/pre&gt;
+&lt;p&gt;Decolatorに関数オブジェクトを渡しておくと、そのtaskとして割り当てられた
+関数を実行した後にデコレートした関数を実行する形になります。&lt;/p&gt;
+
+&lt;p&gt;&amp;hellip; 簡易なtask管理スクリプトとしては良いかもしれません。けど、
+できればやはりrakeのようなコマンドとして利用できるとよりいいかな。
+taskを管理しているファイル名ごとに叩くファイル名、pathが異なると面倒なので。&lt;/p&gt;
+</content>
+  </entry>
+  <entry>
+    <title>How to use git flow</title>
+    <link rel="alternate" href="/post/2013/01/06/how-to-use-git-flow.html"/>
+    <id>/post/2013/01/06/how-to-use-git-flow.html</id>
+    <published>2013-01-06T12:46:00Z</published>
+    <updated>2013-01-06T12:46:00Z</updated>
+    <author>
+      <name>Article Author</name>
+    </author>
+    <content type="html">&lt;h1&gt;How to use git flow&lt;/h1&gt;
+
+&lt;p&gt;あけましておめでとうございます。
+皆様いかがお過ごしでしょうか？&lt;/p&gt;
+
+&lt;p&gt;会社で&lt;a href="https://github.com/nvie/gitflow"&gt;git flow&lt;/a&gt;を利用したリリース手順・サイクルを繰り返しているのですが、
+正しいのかどうなのかを確認したいため、まとめてみたいと思います。&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;
+
+&lt;h1&gt;git flow とは&lt;/h1&gt;
+
+&lt;p&gt;gitのbranch作成戦略の一つの手、というかテンプレートです。
+branchの作成、mergeの方法(&amp;ndash;no-ff有効にするとか)だのなんだの、
+チーム内のメンバー間でバラバラだと困るし、統一するために利用するためのもの。
+使わなくてもしっかりとlocal, remote branchそれぞれの命名規則や
+mergeの仕方、リリースの仕方について決まっていれば導入する必要はないかもしれません。
+けど、少人数、gitを利用した多人数開発での経験も浅めか、別にbranchを切ったり
+pushしたりの手順を変えても影響がないものプロダクトであれば導入しても問題無いと思います。&lt;/p&gt;
+
+&lt;h1&gt;git flowを利用した場合のリリース手順&lt;/h1&gt;
+
+&lt;p&gt;リリース手順について以下の手順になります。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;issue単位でfeature branchを作る
+
+&lt;ul&gt;
+&lt;li&gt;commitやticketではなく、issue、プロダクトの最小単位でfeature branchを作成するようにします。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;feature branch上でcommitしつづける&lt;/li&gt;
+&lt;li&gt;feature branchに対し、issueの内容を反映し終え、local上(開発者)での動作チェックが済んだらfeature branchをgit pushする&lt;/li&gt;
+&lt;li&gt;origin(upstream)より、development環境上からgit fetch、(3)のbranchの更新内容を取得。git checkout -b branch-name feature branchを行い、テストを出きる状態にする。
+
+&lt;ul&gt;
+&lt;li&gt;既にfeature branch向けのlocal branchを作成しているのであればgit pull feature branchを行いlocal branchにmergeする。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;development環境で動作確認ができたらrelease branchを作成する
+
+&lt;ul&gt;
+&lt;li&gt;git flow release start 1.0.0 という形でrelease branchを作成。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;release branchをorigin(upstream)に対しgit push&lt;/li&gt;
+&lt;li&gt;staging環境上でgit fetch, (6)のbranchの更新内容を取得。git checkout -b branch-name release branchを行い、テストできる状態にする。
+
+&lt;ul&gt;
+&lt;li&gt;既にrelease branch向けのlocal branchを作成しているのであればgit pull release branchを行いlocal branchにmergeする。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;release branchについて動作チェック及びテストに問題がなければ、(5)で作成したrelease branchを閉じる。
+
+&lt;ul&gt;
+&lt;li&gt;git flow release finish 1.0.0&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;1.0.0 のtagが作成される&lt;/li&gt;
+&lt;li&gt;master, 1.0.0のtagをorigin(upstream)にpushする。&lt;/li&gt;
+&lt;li&gt;production環境上でgit fetchを行い、git checkout -b tag-name tag-name を行なっておしまい。&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2&gt;hotfix(リリース後に見つかった急遽のバグ対応)を利用する場合&lt;/h2&gt;
+
+&lt;p&gt;hotfix、つまりリリース直後に見つかった問題を即日対応したい場合のbranchをさくっと作りたい、名前考えてる場合じゃねえや、ってときに使います。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;git flow hotfix start 1.0.1 というbranchを作成します。
+
+&lt;ul&gt;
+&lt;li&gt;branchの名前は、修正を行うバージョンを対象にします。&lt;/li&gt;
+&lt;li&gt;&lt;a href="http://semver.org/"&gt;semver.org&lt;/a&gt;に準拠するなら、1.0.1とする。(patch version)
+
+&lt;ul&gt;
+&lt;li&gt;ただ、本当に細かい内容とかであるなら1.0.0aとかしたほうがいいかも。&lt;/li&gt;
+&lt;li&gt;バージョンの付け方については一定であれば問題無いと思うし&amp;hellip;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;hotfixで対応した内容をdevelopment環境、staging環境で動作チェック、及びテストを行う&lt;/li&gt;
+&lt;li&gt;動作チェック、テストについて(2)で問題がでなければ、git flow hotfix finish 1.0.1 とし、hotfixを閉じる。&lt;/li&gt;
+&lt;li&gt;1.0.1 のtagが作成されるので、git push origin master, git push origin 1.0.1 を行い、中央リポジトリにbranchをpushする&lt;/li&gt;
+&lt;li&gt;production環境上でgit fetchを行い、git checkout -b 1.0.1 1.0.1 を行う&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h1&gt;git flow をインストール&lt;/h1&gt;
+
+&lt;p&gt;マシンにgitがインストールされていることを確認したら、
+&lt;a href="https://github.com/nvie/gitflow"&gt;gitflow&lt;/a&gt;のプロダクトページの
+&lt;a href="https://github.com/nvie/gitflow/wiki/Linux"&gt;wikiページに掲載されているワンライナー&lt;/a&gt;をコピーして、
+ターミナル上でペーストして実行します。&lt;/p&gt;
+&lt;pre class="highlight text"&gt;&amp;gt; wget --no-check-certificate -q -O - https://raw.github.com/nvie/gitflow/develop/contrib/gitflow-installer.sh | sudo bash
+&lt;/pre&gt;
+&lt;p&gt;これだけでインストールが完了します&lt;/p&gt;
+
+&lt;h1&gt;git flow を既存のリポジトリに適用する&lt;/h1&gt;
+
+&lt;p&gt;以下のコマンドを既存のリポジトリのディレクトリに移動して実行すればOK。
+develop, masterなどのbranchについてはgit flowで利用するデフォルトのbranch名を
+利用すれば良いのですが、prefixだけは&amp;quot;v&amp;quot;をつけるようにしておきましょう。
+git flow release start 1.0.0 -&gt; git flow release finish 1.0.0とすると、
+v1.0.0と、release tagにprefixを付けてくれます。&lt;/p&gt;
+&lt;pre class="highlight text"&gt;&amp;gt; cd product
+&amp;gt; git flow init
+Which branch should be used for bringing forth production releases?
+   - master
+Branch name for production releases: [master] 
+Branch name for &amp;quot;next release&amp;quot; development: [develop] 
+
+How to name your supporting branch prefixes?
+Feature branches? [feature/] 
+Release branches? [release/] 
+Hotfix branches? [hotfix/] 
+Support branches? [support/] 
+Version tag prefix? [] v
+&lt;/pre&gt;
+&lt;p&gt;以上でgit flowを利用できるようになります。&lt;/p&gt;
+
+&lt;p&gt;中央リポジトリ(upstream)に対して、以下の形でdevelop, masterそれぞれの
+branchをpushしておきましょう。&lt;/p&gt;
+&lt;pre class="highlight text"&gt;&amp;gt; git push origin develop
+&amp;gt; git push origin master
+&lt;/pre&gt;
+&lt;p&gt;あとは、release branchが作成したときとか、tag作成したときは都度、
+tagやbranch、developやmaster(tagポインタが参照しているから)各branchをpushしましょう。&lt;/p&gt;
+
+&lt;h1&gt;チームメンバー間のコードリーディングについて&lt;/h1&gt;
+
+&lt;p&gt;pull request戦略を取ると、リポジトリをメンバーごとにforkしなければならず、
+それはgithubのクラウド版(GoldとかSilverとか)でそれやると作成できる
+private repositoryの数を減らしまくることになるので、
+feature branchでupstreamに対してpushして対応することにしています。&lt;/p&gt;
+
+&lt;p&gt;といってもまだ会社だと開発チーム小さく、ほぼ分業みたいなことになっているので
+mergeしてもらいたいからbranchを作成しpushするというより
+直接口で話して直してもらうことが多々あるのでfeature branch pushで
+会話をする回数は少ない感じです。&lt;/p&gt;
+
+&lt;h1&gt;参考&lt;/h1&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href="http://www.oreilly.co.jp/community/blog/2011/11/branch-model-with-git-flow.html"&gt;O&amp;#39;reillyに掲載されているgit flowの使い方&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+  </entry>
+</feed>

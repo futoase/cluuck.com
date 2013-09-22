@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - try of rbenv</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>rbenvを使うように改めてみた。</h1>
+
+<h2>rbenvを使おうと思ったきっかけとか</h2>
+
+<p>…nodeであれば<a href="https://github.com/isaacs/nave">nave</a>や<a href="https://github.com/creationix/nvm">nvm</a>、pythonであれば
+<a href="http://pypi.python.org/pypi/virtualenv">virtualenv</a>(切り替えというより環境を作るだけだけど)、
+<a href="https://github.com/utahta/pythonbrew">pythonbrew</a>、perlなら<a href="http://perlbrew.pl/">perlbrew</a>があるように
+バージョン管理及び現状のシェルで利用する
+インタプリタのバージョンを切り替えたい場合、
+rubyだと<a href="https://rvm.io/">rvm</a>かなーということぐらいしか知らなかった。
+とある人からrvmじゃなくてrbenvがいいよと言われたので
+rbenvを入れてみた。</p>
+
+<ul>
+<li><a href="https://github.com/sstephenson/rbenv">rbenv</a></li>
+</ul>
+
+<p>…MacOS Xな環境であればhomebrewを利用すればすぐに利用できる。</p>
+
+<p></p>
+<pre class="highlight text">$ brew install rbenv
+$ brew install ruby-build
+</pre>
+<p>他のプラットフォーム、例えばLinuxディストリビューションの
+場合はgithubリポジトリからgit cloneを行えば良い。
+詳しくはリポジトリの<a href="https://github.com/sstephenson/rbenv/blob/master/README.md#section_2.1">README.md</a>に書いてある。</p>
+<pre class="highlight text">$ echo &#39;export PATH=&quot;$HOME/.rbenv/bin:$PATH&quot;&#39; &gt;&gt; ~/.zshenv
+$ echo &#39;eval &quot;$(rbenv init -)&quot;&#39; &gt;&gt; ~/.zshenv
+</pre>
+<p><a href="https://github.com/sstephenson/ruby-build">ruby-build</a>(rbenvで指定したバージョンのrubyをビルドするためのplugin)を入れているのでバージョンを指定して
+インストール指定をするだけで終わる。</p>
+<pre class="highlight text">$ rbenv install 
+  Available versions:
+    1.8.6-p383
+    1.8.6-p420
+    1.8.7-p249
+    1.8.7-p302
+    1.8.7-p334
+    1.8.7-p352
+    1.8.7-p357
+    1.8.7-p358
+    1.9.1-p378
+    1.9.2-p180
+    1.9.2-p290
+    1.9.2-p318
+    1.9.2-p320
+    1.9.3-dev
+    1.9.3-p0
+    1.9.3-p125
+    1.9.3-p194
+    1.9.3-preview1
+    1.9.3-rc1
+    2.0.0-dev
+    jruby-1.6.3
+    jruby-1.6.4
+    jruby-1.6.5
+    jruby-1.6.5.1
+    jruby-1.6.6
+    jruby-1.6.7
+    jruby-1.7.0-dev
+    maglev-1.0.0
+    rbx-1.2.4
+    rbx-2.0.0-dev
+    ree-1.8.6-2009.06
+    ree-1.8.7-2009.09
+    ree-1.8.7-2009.10
+    ree-1.8.7-2010.01
+    ree-1.8.7-2010.02
+    ree-1.8.7-2011.03
+    ree-1.8.7-2011.12
+    ree-1.8.7-2012.01
+    ree-1.8.7-2012.02
+</pre><pre class="highlight text">$ rbenv install 1.9.2-p320
+$ rbenv install 1.9.3-p194
+</pre><pre class="highlight text">$ rbenv global 1.9.2-p320
+$ rbenv global
+1.9.2-p320
+$ rbenv rehash #ruby, irb, gemなどのコマンドについて新しいバージョンを認識させる
+</pre><pre class="highlight text">$ mkdir project
+$ cd project
+$ rbenv local 1.9.2-p320 # .rbenv-bersion ファイルが作成される
+$ rbenv local
+1.9.2-p320
+$ rbenv rehash
+$ cd ..
+$ rbenv local # 親ディレクトリには.rbenv-version ファイルが無い
+rbenv: no local version configured for this directory
+</pre>
+<p>バージョン切り替える度にrehash&hellip;を行うわけだが、
+煩わしさを解決するためのスクリプトは
+ググれば沢山でてくるので問題無いと思う。
+rbenvは軽量な感じがする。最低限の機能しかないというか。
+でもまあ必要充分かなぁ。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

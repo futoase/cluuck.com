@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - Try to use the Sakura board</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>Sakura board をいじる</h1>
+
+<p><a href="http://sakuraboard.net/">Sakura board</a> を買ったままそのまま時が過ぎてしまい、
+書くこともないし試しにいじってみようかな、と思ったので
+Sakura board をいじる、という内容で書いてみます。</p>
+
+<h1>Sakura board とは</h1>
+
+<p><a href="http://www.arduino.cc/">Arduino</a>互換のボードで、基盤がピンク色。
+プログラムを実行するための環境として
+クラウド上でのコンパイル環境が整備されており、
+ユーザーとして最初にボードの挙動などを確認する程度であれば
+用意するものはUSB &lt;-> mini USBケーブル1本と
+PC (MacもOK)があれば良いという親切な環境が整っています。</p>
+
+<p></p>
+
+<h1>テストコードを実行してみる</h1>
+
+<p><a href="http://sakuraboard.net/">sakuraboard.net</a>を見ながら、作業を進めていきます。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-use-the-sakura-board/screen-1.png" /></p>
+
+<p>Sakura board を Mac Book Pro Retina 13 inch に接続し、
+SW1ボタン(茶色いボタン)を押します。
+すると、システム側にSakura boardがマウントされます。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-use-the-sakura-board/screen-2.png" /></p>
+
+<p>システム側にマウントされたのを確認した後、
+<a href="http://tool-cloud.renesas.com/">Runesas Web Compiler</a>へゲストとしてログインし、
+最初から用意されているテンプレートを選択、
+適当なプロダクト名を付け、プロダクトの作成を行います。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-use-the-sakura-board/screen-3.png" /></p>
+
+<p>Runesas Web Compiler にて、プロジェクトのビルドを選択します。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-use-the-sakura-board/screen-4.png" /></p>
+
+<p>ビルドが成功すると思います。(何もいじっていなければ&hellip;)</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-use-the-sakura-board/screen-5.png" /></p>
+
+<p>ビルドが成功した後、sketch.bin ファイルが作成されているので(Runesas Web Compilerの左ペインに出ます)、
+ファイルをダウンロードし、Sakura board に転送します。
+すると、<a href="http://youtu.be/xolHe6-W6mk?hd=1">Sakura board にあるLEDが光ります。</a></p>
+
+<p>開発環境を整えるのに頭を抱えなくても出きるあたりがすごいと思いました。
+しばらくはコードを書いて評価させて、を繰り返した後にスイッチやLEDや、
+はたまたサーボでも買ってテストしてみたいな、と思いました。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

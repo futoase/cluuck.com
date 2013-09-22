@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - I tried to use redis 2.6</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>Redis 2.6から内包されているLuaを試す</h1>
+
+<p><a href="http://redis.io/">Redis 2.6</a>に内包されている<a href="http://www.lua.org/">Lua</a>について挙動を確認したいと思います。
+というかいつの間にかRedis 2.6.6がリリースされているし、チェックを怠りすぎてしまっていました。</p>
+
+<h1>Mac OS X で動作チェック</h1>
+
+<p>homebrewを利用してRedisをインストールするのがとても簡単です。というかそれで充分です。</p>
+<pre class="highlight text">&gt; homebrew install redis
+</pre>
+<p>redis-serverコマンドによってredisを起動します。</p>
+<pre class="highlight text">&gt; redis-server /usr/local/etc/redis.conf       
+[3295] 02 Dec 22:59:46.845 * Max number of open files set to 10032
+
+                _._                                                 
+           _.-``__ &#39;&#39;-._                                            
+      _.-``    `.  `_.  &#39;&#39;-._           Redis 2.6.6 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ &#39;&#39;-._                                  
+ (    &#39;      ,       .-`  | `,    )     Running in stand alone mode
+ |`-._`-...-` __...-.``-._|&#39;` _.-&#39;|     Port: 6379
+ |    `-._   `._    /     _.-&#39;    |     PID: 3295
+  `-._    `-._  `-./  _.-&#39;    _.-&#39;                                  
+ |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|                                 
+ |    `-._`-._        _.-&#39;_.-&#39;    |           http://redis.io       
+  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;                                  
+ |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|                                 
+ |    `-._`-._        _.-&#39;_.-&#39;    |                                 
+  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;                                  
+      `-._    `-.__.-&#39;    _.-&#39;                                      
+          `-._        _.-&#39;                                          
+              `-.__.-&#39;                                              
+[3295] 02 Dec 22:59:46.846 # Server started, Redis version 2.6.6
+[3295] 02 Dec 22:59:46.849 * DB loaded from disk: 0.003 seconds
+[3295] 02 Dec 22:59:46.849 * The server is now ready to accept connections on port 6379
+</pre>
+<p>いつの間にAAがでるように&hellip;</p>
+
+<p></p>
+
+<p>起動したので、redis-clientを利用して起動してみます。</p>
+<pre class="highlight text">&gt; redis-cli
+redis 127.0.0.1:6379&gt;
+</pre>
+<p>OK。試しに何かsetしてみましょう。</p>
+<pre class="highlight text">redis 127.0.0.1:6379&gt; hset futoase age 30
+(integer) 1
+redis 127.0.0.1:6379&gt; hget futoase age
+&quot;30&quot;
+</pre>
+<p>動作確認はOK。ということで早速内包されたLuaでチェックしてみましょう。
+<a href="http://redis.io/commands/eval">Redisに内包されたLuaを利用するにはevalコマンドを利用する</a>ようです。</p>
+<pre class="highlight text">redis 127.0.0.1:6379&gt; eval &quot;return {KEYS[1], KEYS[2], ARGV[1], ARGV[2]}&quot; 2 key1 key2 first second
+1) &quot;key1&quot;
+2) &quot;key2&quot;
+3) &quot;first&quot;
+4) &quot;second&quot;
+</pre>
+<p>Redisに内包されているLuaのバージョンは、<a href="http://redis.io/commands/eval">ドキュメントに書かれているけど5.1</a>。
+evalの第二引数(ここで2としているもの)は、KEYSに引き渡す引数の数を指定する形になっています。
+ARGVには、引数が渡される形になっています。(KEYSのうまい活用方法なんだろう？)</p>
+
+<p>for文を使って繰り返し、且つforで利用している値を突っ込むことができます。</p>
+<pre class="highlight text">redis 127.0.0.1:6379&gt; eval &quot;for i = 1, 100  do redis.call(&#39;set&#39;, &#39;num-&#39;.. i, i) end&quot; 0
+(nil)
+redis 127.0.0.1:6379&gt; eval &quot;local res = {} for i = 1, 100 do table.insert(res, redis.call(&#39;get&#39;, &#39;num-&#39;..i)) end return res&quot; 0
+  1) &quot;1&quot;
+  2) &quot;2&quot;
+  3) &quot;3&quot;
+  4) &quot;4&quot;
+  5) &quot;5&quot;
+  6) &quot;6&quot;
+  7) &quot;7&quot;
+…
+ 95) &quot;95&quot; 
+ 96) &quot;96&quot;
+ 97) &quot;97&quot;
+ 98) &quot;98&quot;
+ 99) &quot;99&quot;
+100) &quot;100&quot;
+</pre>
+<p>素晴らしい…resというテーブルに値を突っ込んで返すというものを書いてみました。</p>
+
+<p>とあるkeyからfieldすべてを取得し、
+且つとある文字列にマッチするものだけ、resに突っ込んで返す(hashから選択)というものを書いてみます。</p>
+<pre class="highlight text">redis 127.0.0.1:6379&gt; hset &#39;user&#39; &#39;takeshi&#39; 100
+(integer) 1
+redis 127.0.0.1:6379&gt; hset &#39;user&#39; &#39;moyashi&#39; 50
+(integer) 1
+redis 127.0.0.1:6379&gt; hset &#39;user&#39; &#39;momonga&#39; 60
+(integer) 1
+redis 127.0.0.1:6379&gt; hset &#39;user&#39; &#39;shishido&#39; 900
+(integer) 1
+redis 127.0.0.1:6379&gt; hset &#39;user&#39; &#39;dododo&#39; 10
+(integer) 1
+redis 127.0.0.1:6379&gt; hkeys &#39;user&#39;
+1) &quot;takeshi&quot;
+2) &quot;moyashi&quot;
+3) &quot;momonga&quot;
+4) &quot;shishido&quot;
+redis 127.0.0.1:6379&gt; eval &quot;local res = {} for k,v in pairs(redis.call(&#39;hkeys&#39;, &#39;user&#39;)) do table.insert(res,v) end return res&quot; 0
+1) &quot;dododo&quot;
+2) &quot;momonga&quot;
+3) &quot;moyashi&quot;
+4) &quot;shishido&quot;
+5) &quot;takeshi&quot;
+redis 127.0.0.1:6379&gt; eval &quot;local res = {} for k,v in pairs(redis.call(&#39;hkeys&#39;, &#39;user&#39;)) do if string.match(v, &#39;do&#39;) then table.insert(res,v) end end return res&quot; 0
+1) &quot;dododo&quot;
+2) &quot;shishido&quot;
+</pre>
+<p>&hellip; redis-cliで長いスクリプトを書くのは面倒、改行すると評価されてしまうので&hellip;
+次からはきちんと言語バインディングを利用して、使ってみようと思います。
+便利機能だなーと思いましたとさ！</p>
+
+<p>Luaのテーブルについて<a href="http://www.lua.org/manual/5.1/manual.html#pdf-pairs">pairsをforで使う場合は必要</a>とか、
+<a href="http://www.lua.org/manual/5.1/manual.html#pdf-table.insert">table.insertを使ってテーブルに値をpushする</a>とか、
+ちょっとやれば慣れると思うのだろうけどきちんと仕様確認しつつ学ばないと。
+今後、インフラをやるにあたってLua覚えとくと助けになると思ってます。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - I tried to use the Buster.js</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>Buster.js</h1>
+
+<p>Buster.jsが良いというプレゼンを見たので、試しにいじってみようかな、と思います。
+(以下、株式会社マピオン 中村 浩士さんのslide share上に上がっているプレゼン資料です)
+{% slideshare 15514542 %}</p>
+
+<h1>動作を確認する</h1>
+
+<h2>環境整備</h2>
+
+<p><a href="http://docs.busterjs.org/en/latest/getting-started/">Geting Started</a>を見ながら環境を整備します。</p>
+<pre class="highlight text">npm install -g buster
+</pre>
+<p></p>
+
+<h2>最低限の動作テストを書く</h2>
+
+<p>Getting Startedに書かれているコードをそのまま書いてみます。</p>
+
+<p>test/buster.jsかspec/buster.jsを書くことで、
+busterコマンドを実行した時に自動的にtest/buster.jsかspec/buster.jsを
+読みに行きます。</p>
+<pre class="highlight javascript"><span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">;</span>
+
+<span class="nx">config</span><span class="p">[</span><span class="s2">&quot;My tests&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">rootPath</span><span class="p">:</span> <span class="s2">&quot;../&quot;</span><span class="p">,</span>
+  <span class="na">env</span><span class="p">:</span> <span class="s2">&quot;node&quot;</span><span class="p">,</span>
+  <span class="na">sources</span><span class="p">:</span> <span class="p">[</span>
+  <span class="p">],</span>
+  <span class="na">tests</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s1">&#39;test/*-test.js&#39;</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre><pre class="highlight javascript"><span class="kd">var</span> <span class="nx">buster</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;buster&quot;</span><span class="p">);</span>
+
+<span class="nx">buster</span><span class="p">.</span><span class="nx">testCase</span><span class="p">(</span><span class="s2">&quot;Sample test&quot;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="s2">&quot;test 01&quot;</span><span class="err">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">assert</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre>
+<p>今回はテストとして、nodeでの実行を行うため、
+busterのパスが通るようにローカルディレクトリでもbusterを入れておきます。</p>
+<pre class="highlight text">npm install buster
+</pre>
+<p>buster test でテストを実行します。</p>
+<pre class="highlight text">&gt; buster test
+Sample test: .
+1 test case, 1 test, 1 assertion, 0 failures, 0 errors, 0 timeouts
+Finished in 0.003s
+</pre>
+<p>実行されました。</p>
+
+<h1>ブラウザ向けのテスト</h1>
+
+<p>ブラウザ向けのテストを書くことも可能です。
+その場合は、config(test/buster.js)のenvironmentをbrowserに変更します。</p>
+<pre class="highlight javascript"><span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">;</span>
+
+<span class="nx">config</span><span class="p">[</span><span class="s2">&quot;My tests&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">rootPath</span><span class="p">:</span> <span class="s2">&quot;../&quot;</span><span class="p">,</span>
+  <span class="na">environment</span><span class="p">:</span> <span class="s2">&quot;browser&quot;</span><span class="p">,</span>
+  <span class="na">sources</span><span class="p">:</span> <span class="p">[</span>
+  <span class="p">],</span>
+  <span class="na">tests</span><span class="p">:</span> <span class="p">[</span>
+    <span class="s1">&#39;test/*-test.js&#39;</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre>
+<p>また、requireはブラウザでは行えないのでコードをコメントアウトします。</p>
+<pre class="highlight javascript"><span class="c1">//var buster = require(&quot;buster&quot;);
+</span>
+<span class="nx">buster</span><span class="p">.</span><span class="nx">testCase</span><span class="p">(</span><span class="s2">&quot;Sample test&quot;</span><span class="p">,</span> <span class="p">{</span>
+  <span class="s2">&quot;test 01&quot;</span><span class="err">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">assert</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</pre>
+<p>buster serverを実行します。</p>
+<pre class="highlight text">&gt; buster server                                                        
+buster-server running on http://localhost:1111
+</pre>
+<p>サーバーを起動したら、ブラウザーにて
+http://localhost:1111にアクセスをします。
+ブラウザーでのアクセス後、&quot;Capture browser&quot;ボタンをクリックします。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/i-tried-to-use-the-buster-js/screen-1.png" /></p>
+
+<p>今回は、ChromeとSafari、2つのブラウザで接続をします。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/i-tried-to-use-the-buster-js/screen-2.png" /></p>
+
+<p>ブラウザでサーバーに接続した後、サーバーを立ちあげたまま
+buster testを実行します。 </p>
+<pre class="highlight text">&gt; buster test                                                          
+Chrome 23.0.1271.95, Mac OS X 10.8.2:                                                                                  
+Safari 6.0.2, Mac OS X 10.8.2:        .                                                                                                    .
+2 test cases, 2 tests, 2 assertions, 0 failures, 0 errors, 0 timeouts
+Finished in 0.007s
+</pre>
+<p>各ブラウザでのjsテストが走りました。</p>
+
+<p>BDD形式のテストコードをかける形、というのと
+各ブラウザでのwebフロント側のテストが行えるのでよさそうだな、と思いました。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

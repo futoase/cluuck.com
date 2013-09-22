@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - facebook graph api /app</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>facebookのOAuth認証について</h1>
+
+<p>自分で作成したfacebookアプリケーションへの登録をしているか
+確認した後、Graph APIの/meでユーザーの情報を取得する場合、
+以下の問題が考えられます。</p>
+
+<ol>
+<li>&ldquo;A&quot;というアプリケーションについて、&quot;Z&quot;というユーザーは登録した</li>
+<li>&quot;B&quot;というアプリケーションについても、&quot;Z&quot;というユーザーは登録した</li>
+<li>&quot;B&quot;アプリケーションのプロバイダーが、&quot;Z&quot;が自己のアプリに登録しているのか、&quot;Z&quot;が保持しているOAuthトークンを元に確認した。</li>
+<li>この時、&quot;Z&quot;が払いだしてきたOAuthトークンは&quot;A&quot;のものだったが、facebook側では&quot;A&quot;を認証しているか、という確認になるため、SUCCESSを返す。</li>
+<li>&quot;B&quot;アプリケーションのプロバイダーはfacebookからのレスポンスが正常だったため、Graph APIでユーザーの情報を取得しようとする。</li>
+</ol>
+
+<p>これはありがちな問題、ということで<a href="http://oauth.jp/oauth-20-implicit-flow-78852">話に上がっていたり</a>しています。
+職場で教えてもらったりしました。OAuthトークンを元にしたアプリケーション情報の取得については
+<a href="https://developers.facebook.com/docs/howtos/login/login-as-app/">Step 2. Make Requests to the API項</a>に書かれています。</p>
+
+<p></p>
+
+<h1>試してみる</h1>
+
+<p>先ほどのアプリケーション認証の抜け穴について
+<a href="https://github.com/arsduo/koala">koala</a>というrubyの便利なgemライブラリを利用して検証します。 </p>
+
+<h2>facebook アプリケーションの登録　</h2>
+
+<p><a href="https://developers.facebook.com/">facebook developers</a>で、アプリケーションの登録を行うことができます。
+テストアプリケーションを2つほど登録します。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/facebook-graph-api-app/screen-1.png" /></p>
+
+<p>登録後、<a href="https://developers.facebook.com/tools/explorer/">Graph API Explorer</a>を利用しアクセストークンを取得し、
+koalaを利用して確認をします。アクセストークン取得時に
+アプリケーションの特定パーミッションへのアクセス許可も行うので大丈夫です。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/facebook-graph-api-app/screen-2.png" /></p>
+<pre class="highlight ruby"><span class="nb">require</span> <span class="s1">&#39;koala&#39;</span>
+<span class="c1"># アプリBのトークンを利用してGraph API /meへのアクセスを行う。</span>
+<span class="vi">@graph</span> <span class="o">=</span> <span class="no">Koala</span><span class="o">::</span><span class="n">facebook</span><span class="o">::</span><span class="no">API</span><span class="nf">.new</span><span class="p">(</span><span class="s2">&quot;アプリBのアクセストークン&quot;</span><span class="p">)</span>
+<span class="n">profile</span> <span class="o">=</span> <span class="vi">@graph</span><span class="nf">.get_object</span><span class="p">(</span><span class="s2">&quot;me&quot;</span><span class="p">)</span>
+<span class="c1"># profileにはアプリBでアクセスを許可したパーミッションの情報が戻る</span>
+</pre>
+<p>ここでGraph API経由で得たユーザー情報は
+アプリケーションBのものです。きちんとOAuthトークンを要求した
+アプリケーションに関して情報を取得するには、以下の形で、
+Grap API appに対し問い合わせを行います。</p>
+<pre class="highlight ruby"><span class="nb">require</span> <span class="s1">&#39;koala&#39;</span>
+<span class="vi">@graph</span> <span class="o">=</span> <span class="no">Koala</span><span class="o">::</span><span class="n">facebook</span><span class="o">::</span><span class="no">API</span><span class="nf">.new</span><span class="p">(</span><span class="s2">&quot;アプリBのアクセストークン&quot;</span><span class="p">)</span>
+<span class="n">application_profile</span> <span class="o">=</span> <span class="vi">@graph</span><span class="nf">.get_object</span><span class="p">(</span><span class="s2">&quot;app&quot;</span><span class="p">)</span>
+<span class="n">application_profile</span><span class="o">[</span><span class="s2">&quot;id&quot;</span><span class="o">]</span>   <span class="c1"># アプリBのアプリケーションID</span>
+<span class="n">application_profile</span><span class="o">[</span><span class="s2">&quot;name&quot;</span><span class="o">]</span> <span class="c1"># アプリBのアプリケーション名</span>
+</pre>
+<p>OAuthアクセストークンがどのアプリで払いだされたか、を
+アプリケーションIDでチェックするようにすれば
+自分のアプリケーション向けに払いだされたOAuthトークンであるか確認が行えます。</p>
+
+<p>ただ、いつまでGraph APIのappが有効なのかもわからないし、(今のところドキュメントできちんと明記されていない、)
+facebookもうすこしドキュメント整備してくれないものか、と思ったりします。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

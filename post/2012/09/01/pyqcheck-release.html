@@ -1,0 +1,114 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - pyqcheck-release</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>PyQCheckをリリースしました。</h1>
+
+<p><a href="https://github.com/futoase/PyQCheck">Github上のリポジトリ</a>のREADME.mdにインストール方法を書いておきました。ここで改めてインストール方法については記載することは省略します。</p>
+
+<h2>PyQCheckとはなんなのか</h2>
+
+<p>README.mdに書いているんですが、Quick check-likeなランダムデータをとある関数に対して渡して返り値を確認することでとある関数が正常に動作しているのかテストを行うことができるテストフレームワークとなっております。</p>
+
+<h2>注意点</h2>
+
+<p>Python 2.7.3 での動作を確認しています。Python 3.xは多分対応していません。(エラー処理のキャッチ部分を直さないといけないので&hellip;) 2to3 した後の動作確認を行うのが面倒なので、今後のバージョンアップに関しては Python 3.3 以上を対象としていきます&hellip;</p>
+
+<h1>テストを書いてみよう</h1>
+
+<p>適当なテストスクリプトについては以下にありますが、例を書いてみましょう。</p>
+
+<p></p>
+<pre class="highlight python"><span class="kn">from</span> <span class="nn">pyqcheck.pyqcheck</span> <span class="kn">import</span> <span class="n">PyQCheck</span><span class="p">,</span> <span class="nb">set</span><span class="n">_arbitrary</span>
+
+<span class="k">class</span> <span class="nc">ColdError</span><span class="p">(</span><span class="n">BaseException</span><span class="p">):</span>
+  <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">HotError</span><span class="p">(</span><span class="n">BaseException</span><span class="p">):</span>
+  <span class="k">pass</span>
+
+<span class="nd">@set_arbitrary</span><span class="p">(</span>
+  <span class="p">(</span><span class="s">&#39;integer&#39;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">min</span><span class="o">=-</span><span class="mi">20</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">50</span><span class="p">)),</span>
+  <span class="n">exceptions</span><span class="o">=</span><span class="p">(</span><span class="n">ColdError</span><span class="p">,</span> <span class="n">HotError</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">tropical</span><span class="p">(</span><span class="n">temperature</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">temperature</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">10</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">ColdError</span>
+  <span class="k">if</span> <span class="n">temperature</span> <span class="o">&gt;</span> <span class="mi">40</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="n">HotError</span>
+
+  <span class="k">return</span> <span class="bp">True</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+  <span class="n">PyQCheck</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">result</span><span class="p">()</span>
+</pre>
+<p>以上のコードをpyqcheck-test.pyというファイルに書き出し、ファイルを保存して実行をしてみると、テスト結果が表示されます。</p>
+<pre class="highlight text">start test.
+finish.
+----- PyQCheck test results... -----
+label: no label
+success: 7
+failure: 0
+exceptions: 
+  HotError: 2
+  ColdError: 1
+verbose: 
+  ☃  tropical(45)
+  ☃  tropical(41)
+  ☀  tropical(6)
+  ☀  tropical(31)
+  ☀  tropical(37)
+  ☀  tropical(10)
+  ☀  tropical(-4)
+  ☀  tropical(30)
+  ☃  tropical(-15)
+  ☀  tropical(-10)
+-----
+</pre>
+<p>エラーがきちんと補足されていますね。
+正常な場合の返り値については、TrueやFalse以外にtupleやstrなどを指定することができます。
+Arbitraryについては範囲指定を行うこともできます。(README.mdには細かく記載していない)
+ランダムテスト以外に使える用途としてはテスト用のレコードを1億行分作りたい、ランダムデータ入りで、みたいな感じでしょうか。</p>
+
+<h1>今後</h1>
+
+<p>もうちょっと便利に利用できるようにしたいと思います。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

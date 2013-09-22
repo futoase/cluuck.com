@@ -1,0 +1,352 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+          <p>Page 3 of 3</p>
+
+  
+    <p><a href="/page/2/"><< Previous page</a></p>
+  
+  
+
+
+  <h2><a href="/post/2012/07/10/ctype-digit-vs-preg-match.html">ctype_digit vs preg_match</a> <span>Jul 10</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>ctype digit と preg matchでの文字列比較速度</h1>
+
+<p>そういやctype_digitのほうが早いみたいなの言われていないっけ、と思ったので確認してみた。</p>
+
+<h1>スクリプトの準備</h1>
+
+<p>ランダムな文字列を生成するロジックを用意する。文字列判定のためだけに利用する単純な奴。</p>
+<pre class="highlight php"><span class="cp">&lt;?php</span>
+
+<span class="k">function</span> <span class="nf">generate_random_strings</span><span class="p">(</span><span class="nv">$type</span><span class="o">=</span><span class="s1">&#39;letters&#39;</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">switch</span><span class="p">(</span><span class="nv">$type</span><span class="p">){</span>
+      <span class="k">case</span> <span class="s1">&#39;digits&#39;</span><span class="o">:</span>
+        <span class="nv">$asset</span> <span class="o">=</span> <span class="s1">&#39;0123456789&#39;</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+      <span class="k">case</span> <span class="s1">&#39;letters&#39;</span><span class="o">:</span>
+      <span class="k">default</span><span class="o">:</span>
+        <span class="nv">$asset</span> <span class="o">=</span> <span class="s1">&#39;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&#39;</span><span class="p">;</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nv">$length</span> <span class="o">=</span> <span class="nb">strlen</span><span class="p">(</span><span class="nv">$asset</span><span class="p">);</span>
+    <span class="nv">$max</span> <span class="o">=</span> <span class="nb">rand</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">32</span><span class="p">);</span>
+    <span class="nv">$result</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="k">for</span><span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$max</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">){</span>
+        <span class="nb">array_push</span><span class="p">(</span><span class="nv">$result</span><span class="p">,</span> <span class="nv">$asset</span><span class="p">[</span><span class="nb">rand</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$length</span><span class="o">-</span><span class="mi">1</span><span class="p">)]);</span> 
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="nb">implode</span><span class="p">(</span><span class="nv">$result</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="nf">generate_list</span><span class="p">(</span><span class="nv">$max</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="nv">$type</span><span class="o">=</span><span class="s1">&#39;letters&#39;</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="nv">$result</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+  <span class="k">for</span><span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nv">$max</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span><span class="p">){</span>
+    <span class="nb">array_push</span><span class="p">(</span><span class="nv">$result</span><span class="p">,</span> <span class="nx">generate_random_strings</span><span class="p">(</span><span class="nv">$type</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$result</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="nf">generate_letters_list</span><span class="p">(</span><span class="nv">$max</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="nx">generate_list</span><span class="p">(</span><span class="nv">$max</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">function</span> <span class="nf">generate_digits_list</span><span class="p">(</span><span class="nv">$max</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">return</span> <span class="nx">generate_list</span><span class="p">(</span><span class="nv">$max</span><span class="p">,</span> <span class="s1">&#39;digits&#39;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre>
+<p>
+  <a href="/post/2012/07/10/ctype-digit-vs-preg-match.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/07/02/tuningathon-20120630.html">tuningathon 20120701</a> <span>Jul  2</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>tuningathon #4に参加しました。</h1>
+
+<p><a href="http://www.zusaar.com/event/312053">チューニンガソン #4</a>に参加しました。
+転職先の職場ではインフラエンジニアよりの仕事をしているため、良い機会だと思い参加を決めました。</p>
+
+<h1>tuningathon #4のお題</h1>
+
+<p><a href="http://rubyonrails.org/">Ruby on Rails</a>製のCMS <a href="http://refinerycms.com/">Refinery</a> に対する書き込み and 読み込み(Viewの描画)を含め、アプリ側の
+ソースコードには手を触れず(database.ymlとconfig/environments/development.rbの設定ファイルは除く)、
+サーバサイド側の環境の改善だけでパフォマンスをあげていく、という内容です。</p>
+
+<h2>お題の測定</h2>
+
+<p>お題の測定については、パフォーマンス測定兼スコアリングスクリプトを実行し、サービスに対し
+コメントを記入、コメントの描画(取得)を行うというものでした。</p>
+
+<h2>チューニンガソン開始時のアプリケーション実行環境</h2>
+
+<p>実行環境については以下のとおりです。</p>
+
+<ul>
+<li>Amazon EC2 c1.mediumインスタンス 
+
+<ul>
+<li>ap-southeast-1 リージョン(シンガポール)</li>
+<li>AMI 2012-03 x86_64</li>
+</ul></li>
+<li>MySQL  5.5.20 (EC2インスタンス内にてインストール)<br></li>
+<li>ruby 1.8.7</li>
+<li>計測対象のアプリケーションRefineryはインストール済</li>
+</ul>
+
+<p>以下、計測スクリプトで都度パフォーマンス計測をしながら改善を行った結果を書き出します。</p>
+
+<p>
+  <a href="/post/2012/07/02/tuningathon-20120630.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/06/20/move-ec2-instance-to-other-region.html">move ec2 instance to other region</a> <span>Jun 20</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>EC2インスタンスを他のリージョンに移動したい</h1>
+
+<ul>
+<li>EBSを利用したEC2インスタンスを他リージョンに移動させるための手順がよくわからんのでまとめた。</li>
+</ul>
+
+<h2>作業手順</h2>
+
+<ol>
+<li><a href="http://aws.amazon.com/jp/s3/">S3 bucket</a>に現行のAMI(Amazon Machine Image)をアップロードする</li>
+<li>S3 bucketにイメージをアップロードした後、移行先でインスタンスを作成</li>
+<li>インスタンスの動作を確認できたら<a href="http://aws.amazon.com/jp/ebs/">EBS</a>をattachした形でインスタンスを起動できるようAMI(Amazon Machine Image)を作成する</li>
+<li>作成したAMIを元にインスタンスを作成する</li>
+<li>インスタンスの動作を確認して問題がなければ終わり</li>
+</ol>
+
+<h1>事前作業</h1>
+
+<p>注意点として、EC2インスタンスのデータ転送量はAWS内(リージョンが異なったとしても)以外でのやり取りでは<a href="http://aws.amazon.com/jp/ec2/#pricing">お金が無駄にかかると言う点</a>。そのため、EC2インスタンス内での作業を行うようにしている。</p>
+
+<ul>
+<li>セッション切れをおこなさないようにするためにServerAliveInterval設定をする</li>
+</ul>
+<pre class="highlight text">ServerAliveInterval 30
+</pre>
+<ul>
+<li>sshdの PermitRootLogin を yes にする</li>
+</ul>
+<pre class="highlight text">PermitRootLogin yes
+</pre>
+<ul>
+<li>X.509秘密鍵及び証明書、及びEC2インスタンス作成時に利用しているcert-ec2.pem(証明書)を用意しておく</li>
+</ul>
+
+<p>
+  <a href="/post/2012/06/20/move-ec2-instance-to-other-region.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/06/14/try-playframework-2-dot-0.html">try playframework 2.0</a> <span>Jun 14</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <p><a href="http://www.playframework.org/">PlayFramework 公式サイト</a></p>
+
+<h1>PlayFrameworkとはなんだろう</h1>
+
+<p><a href="http://www.slideshare.net/karadweb/playframework-20-java-websocket-mvc-web">原さんのプレゼン</a>に概要(含まれているライブラリなど)が書かれている。</p>
+
+<ul>
+<li>元々Javaのみで書かれたWebFramework。
+
+<ul>
+<li>フルスタック</li>
+</ul></li>
+<li>version 1.2からScalaもサポートされるようになった。
+
+<ul>
+<li>Scalaはモジュールとして利用する</li>
+</ul></li>
+<li>version 2.0からScalaが主体な形でサポートされるようになった。
+
+<ul>
+<li>sbtベース(インタラクティブシェル)</li>
+<li>Javaもサポートされている</li>
+</ul></li>
+</ul>
+
+<h2>PlayFrameworkの主要要素</h2>
+
+<p>以下のライブラリ・フレームワークがバンドルされています。</p>
+
+<ul>
+<li><p>Scala</p>
+
+<ul>
+<li>Javaも利用できるが、Scalaに振った形になっている</li>
+<li>テンプレートはScalaで書かれている</li>
+</ul></li>
+<li><p>sbt</p>
+
+<ul>
+<li>PlayFramework のインタラクティブシェルとして利用されている</li>
+<li>build, test, run などのsbt コマンドを利用する</li>
+</ul></li>
+<li><p>netty</p>
+
+<ul>
+<li>Webserver</li>
+</ul></li>
+<li><p>anorm</p>
+
+<ul>
+<li>PlayFramework 2.0 独自のO/RM
+
+<ul>
+<li>O/RM といえるほどの抽象化はされていない</li>
+<li>ほぼ生のSQLを書く必要がある</li>
+</ul></li>
+</ul></li>
+</ul>
+
+<h1>PlayFrameworkのインストール</h1>
+
+<p>MacOS Lionを基準に話を進めてしまう。</p>
+
+<p>
+  <a href="/post/2012/06/14/try-playframework-2-dot-0.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/06/07/try-knockout-dot-js.html">try knockout.js</a> <span>Jun  7</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>Knockout.jsを使ってみたい</h1>
+
+<p>なんだか、社内で使ってる人がいるようだったから
+触ってみよっかなーってことで確認します。</p>
+
+<h2>Knockout.jsは何か</h2>
+
+<ul>
+<li>Java Script Application Flarmework</li>
+<li><a href="http://ja.wikipedia.org/wiki/Model_View_ViewModel">MVVMアプリケーションアーキテクチャパターン</a>を利用している</li>
+</ul>
+
+<p>&hellip; そのぐらいしか認識していない。</p>
+
+<h2>Knockout.jsを使う環境を整える</h2>
+
+<p><a href="http://knockoutjs.com/">オフィシャルサイト</a>よりKnockout.jsをダウンロードするか、<a href="https://github.com/SteveSanderson/knockout">githubにあるKnockout.jsのリポジトリ</a>からcloneして利用する。
+今回はgithubにあるKnockout.jsのリポジトリよりclone, 特定tagをcheckoutして利用する。</p>
+<pre class="highlight text">$ git clone git://github.com/SteveSanderson/knockout.git knockoutjs
+$ chmod +x knockoutjs/tools/check-trailing-space-linux
+$ sh knockoutjs/build/build-linux
+</pre>
+<p>knockoutjs/output以下に２つのファイルが作成される。
+- output/knockout-latest.debug.js
+- output/knockout-latest.js</p>
+
+<p>knockout-latest.debug.jsはminifyされていないものではあるのだが、今回はKnockout.jsを使ってみよう、ということなのでminifyされたjsを利用する。</p>
+
+<p>
+  <a href="/post/2012/06/07/try-knockout-dot-js.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/05/29/octopress.html">backup repository of octopress</a> <span>May 29</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>忘れていた。</h1>
+
+<p>octopressについてリポジトリをgit cloneして、そのあとrake setup github pages を行った後、rake deployしていた(_deployリポジトリ以下にgithub pages向けのリモートリポジトリが設定される)。でもこのままだとローカルにあるoctopressもといBlogの元データがバックアップされてねーじゃん、ということに気がついたのでgithubにfutoase.github.com.souceなるリポジトリを作成した。</p>
+
+<h2>バックアップ用リポジトリ作成から投稿できるようにするまで</h2>
+
+<ol>
+<li>githubにバックアップ用のリポジトリを作成する</li>
+<li>octopressローカルリポジトリよりgit add remoteを行い、sourceブランチを(1)で作成したリポジトリにpushする</li>
+<li>rake setup<em>github</em>pages で、念の為にdeploy先をfutoase.github.comにする</li>
+</ol>
+
+<p>
+  <a href="/post/2012/05/29/octopress.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/05/28/try-of-rbenv.html">try of rbenv</a> <span>May 28</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>rbenvを使うように改めてみた。</h1>
+
+<h2>rbenvを使おうと思ったきっかけとか</h2>
+
+<p>…nodeであれば<a href="https://github.com/isaacs/nave">nave</a>や<a href="https://github.com/creationix/nvm">nvm</a>、pythonであれば
+<a href="http://pypi.python.org/pypi/virtualenv">virtualenv</a>(切り替えというより環境を作るだけだけど)、
+<a href="https://github.com/utahta/pythonbrew">pythonbrew</a>、perlなら<a href="http://perlbrew.pl/">perlbrew</a>があるように
+バージョン管理及び現状のシェルで利用する
+インタプリタのバージョンを切り替えたい場合、
+rubyだと<a href="https://rvm.io/">rvm</a>かなーということぐらいしか知らなかった。
+とある人からrvmじゃなくてrbenvがいいよと言われたので
+rbenvを入れてみた。</p>
+
+<ul>
+<li><a href="https://github.com/sstephenson/rbenv">rbenv</a></li>
+</ul>
+
+<p>…MacOS Xな環境であればhomebrewを利用すればすぐに利用できる。</p>
+
+<p>
+  <a href="/post/2012/05/28/try-of-rbenv.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/05/27/a-make-new-blog.html">a make new blog</a> <span>May 27</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>Octopressを使うようにしてみた。</h1>
+
+<p>Markdownで書いていくし、記事についてはgitで
+履歴管理がなされるし、これでいいやって思ったので
+使ってみる。技術記事について書きやすそうだし。</p>
+
+<h1>Octopressをgithub上で展開していくためには</h1>
+
+<p>以下に簡単に構築手順を書いておく。オフィシャルにある
+<a href="http://octopress.org/docs/setup/">ドキュメント</a>を参考にしながらやった。</p>
+
+<p>
+  <a href="/post/2012/05/27/a-make-new-blog.html">Read more >></a>
+  <hr/>
+
+  
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - AWS SDK for Node.js</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>AWS SDK for Node.js</h1>
+
+<p><a href="http://aws.typepad.com/aws_japan/2012/12/aws-sdk-for-nodejs-now-available-in-preview-form.html">AWS SDK for Node.jsのプレビュー版がリリースされた</a>という
+話を聞いたので、試しに利用してみます。</p>
+
+<p><a href="http://docs.amazonwebservices.com/nodejs/latest/dg/nodejs-dg-aws-sdk-for-node.js.html">AWS Documentationに掲載されているサンプル</a>を元に試します。</p>
+
+<h1>npm aws-sdkのセットアップ</h1>
+
+<p>node.jsのセットアップについては、各自ご自由に。
+個人的には<a href="https://github.com/hokaccha/nodebrew">nodebrew</a>を利用する方法をオススメします。</p>
+<pre class="highlight text">&gt; mkdir -p ~/Sandbox/aws-sdk-for-node
+&gt; cd ~/Sandbox/aws-sdk-for-node
+&gt; npm install aws-sdk
+</pre>
+<p></p>
+
+<h1>S3にオブジェクトをアップロードするテスト</h1>
+
+<p>AWSにアカウントを登録していることが前提になります。
+accessKeyId, secretAccessKeyについてはAWSのsecurityCredentialsにある
+アクセス証明書項を参考にしてください。</p>
+<pre class="highlight javascript"><span class="kd">var</span> <span class="nx">AWS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;aws-sdk&#39;</span><span class="p">);</span>
+
+<span class="nx">AWS</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span>
+  <span class="na">accessKeyId</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+  <span class="na">secretAccessKey</span><span class="p">:</span> <span class="s1">&#39;&#39;</span>
+<span class="p">});</span>
+
+<span class="nx">AWS</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">update</span><span class="p">({</span>
+  <span class="na">region</span><span class="p">:</span> <span class="s1">&#39;us-east-1&#39;</span>
+<span class="p">});</span>
+
+<span class="kd">var</span> <span class="nx">s3</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AWS</span><span class="p">.</span><span class="nx">S3</span><span class="p">();</span>
+
+<span class="nx">s3</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">createBucket</span><span class="p">({</span>
+  <span class="na">Bucket</span><span class="p">:</span> <span class="s1">&#39;futoaseBucket&#39;</span>
+<span class="p">}).</span><span class="nx">done</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Put object!&#39;</span><span class="p">);</span>
+  <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="p">{</span><span class="na">Bucket</span><span class="p">:</span> <span class="s1">&#39;futoaseBucket&#39;</span><span class="p">,</span> <span class="na">Key</span><span class="p">:</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="na">Body</span><span class="p">:</span> <span class="s1">&#39;30&#39;</span><span class="p">};</span>
+  <span class="nx">s3</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">putObject</span><span class="p">(</span><span class="nx">data</span><span class="p">).</span><span class="nx">done</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Success!&#39;</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">});</span>
+</pre>
+<p>実行してみます。</p>
+<pre class="highlight text">&gt; node s3-test.js
+Put object!
+Success!
+</pre>
+<p>S3のBucketについて、futoaseBucketが作成されているか確認してみます。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/aws-sdk-for-node-js/screen-1.png" /></p>
+
+<p>作成されています。
+APIのラッパーを自前やサードパーティーで実装されたものを使うよりも、
+Amazonが出しているものを使うほうが安心感があるので良いですね(変更に追いつくのもだるいし&hellip;)。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

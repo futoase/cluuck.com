@@ -1,0 +1,91 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - nginx custom 503 page</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>サイトメンテナンス時のHTTP Status codeについて</h1>
+
+<p>ついうっかり、サイトのメンテナンス状態にするときにHTTP Status codeを200で返してしまう状態にしていて、メンテナンス状態の内容がGoogleにキャッシュされるようになってしまっていた。メンテナンス中はHTTP Status code 503を吐き出すようにしたい。</p>
+
+<h1>nginxでのカスタム503ページ設定</h1>
+
+<p>メンテナンス時にだけ起動するEC2インスタンスを用意しちゃう、ということでアプリ用のインスタンスについて影響を出来るだけ出さないようにする、という前提で。</p>
+
+<ul>
+<li>/ (root path)にアクセスしてきた場合にカスタム・メンテナンスページを出す</li>
+<li>/static 以下にはcss, js, jpg, pngなどの静的ファイルを置くが、そのリソースを要求しても503を返してはいけない</li>
+</ul>
+
+<p>以上の要求を満たす、nginxの設定ファイルの書き方は以下の通り。</p>
+
+<p></p>
+<pre class="highlight nginx"><span class="k">server</span> <span class="p">{</span>
+  <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+
+  <span class="kn">server_name</span> <span class="s">hoge.com</span><span class="p">;</span>
+  <span class="kn">root</span> <span class="n">/path/to/web/maintenance</span><span class="p">;</span>
+  <span class="kn">index</span> <span class="s">index.html</span><span class="p">;</span>
+
+  <span class="kn">location</span> <span class="p">~</span> <span class="sr">&quot;^/static/(.*)&quot;</span> <span class="p">{</span> <span class="c1"># /static 以下にあるリソースは直接読み込める形にする
+</span>    <span class="kn">try_files</span> <span class="nv">$uri</span> <span class="nv">$uri</span><span class="n">/</span> <span class="n">/index.html</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="kn">location</span> <span class="n">/</span> <span class="p">{</span>
+    <span class="kn">index</span> <span class="s">index.html</span><span class="p">;</span> 
+    <span class="kn">return</span> <span class="mi">503</span><span class="p">;</span> <span class="c1"># error_page 503 に飛ばす
+</span>  <span class="p">}</span>
+
+  <span class="kn">error_page</span> <span class="mi">503</span> <span class="s">@maintenance</span><span class="p">;</span> <span class="c1"># 503 を @maintenance に飛ばす
+</span>  <span class="kn">location</span> <span class="s">@maintenance</span> <span class="p">{</span>
+    <span class="kn">rewrite</span> <span class="s">^(.*)</span>$ <span class="n">/index.html</span> <span class="s">break</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre>
+<p>これで、http://hoge.com/ にアクセスすると常にHttp status 503、且つindex.htmlで利用している静的リソースは正常に読み込める状態になる。</p>
+
+<p>なんか、色々と今更感があるが気をつけないと&hellip;</p>
+
+<h1>参考</h1>
+
+<ul>
+<li><a href="http://googlewebmastercentral-ja.blogspot.jp/2011/02/blog-post.html">サイトのダウン タイムへの対処の仕方</a></li>
+<li><a href="http://support.google.com/webmasters/bin/answer.py?hl=ja&amp;answer=40132">Google ウェブマスターツール HTTP ステータスコード</a></li>
+</ul>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

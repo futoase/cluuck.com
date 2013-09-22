@@ -1,0 +1,152 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - tuningathon 20120701</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>tuningathon #4に参加しました。</h1>
+
+<p><a href="http://www.zusaar.com/event/312053">チューニンガソン #4</a>に参加しました。
+転職先の職場ではインフラエンジニアよりの仕事をしているため、良い機会だと思い参加を決めました。</p>
+
+<h1>tuningathon #4のお題</h1>
+
+<p><a href="http://rubyonrails.org/">Ruby on Rails</a>製のCMS <a href="http://refinerycms.com/">Refinery</a> に対する書き込み and 読み込み(Viewの描画)を含め、アプリ側の
+ソースコードには手を触れず(database.ymlとconfig/environments/development.rbの設定ファイルは除く)、
+サーバサイド側の環境の改善だけでパフォマンスをあげていく、という内容です。</p>
+
+<h2>お題の測定</h2>
+
+<p>お題の測定については、パフォーマンス測定兼スコアリングスクリプトを実行し、サービスに対し
+コメントを記入、コメントの描画(取得)を行うというものでした。</p>
+
+<h2>チューニンガソン開始時のアプリケーション実行環境</h2>
+
+<p>実行環境については以下のとおりです。</p>
+
+<ul>
+<li>Amazon EC2 c1.mediumインスタンス 
+
+<ul>
+<li>ap-southeast-1 リージョン(シンガポール)</li>
+<li>AMI 2012-03 x86_64</li>
+</ul></li>
+<li>MySQL  5.5.20 (EC2インスタンス内にてインストール)<br></li>
+<li>ruby 1.8.7</li>
+<li>計測対象のアプリケーションRefineryはインストール済</li>
+</ul>
+
+<p>以下、計測スクリプトで都度パフォーマンス計測をしながら改善を行った結果を書き出します。</p>
+
+<p></p>
+
+<ol>
+<li>webrickを利用して計測した結果</li>
+</ol>
+<pre class="highlight text">Score: 2.428 (get=1.200, comment=1.228(2), check=1.000)
+</pre>
+<p>かなり低い。</p>
+
+<ol>
+<li>アプリケーションサーバを<a href="http://unicorn.bogomips.org/">unicorn</a>に変更し、計測した結果</li>
+</ol>
+<pre class="highlight text">Score: 3.863 (get=2.100, comment=1.763(2), check=1.000)
+</pre>
+<p>すこし上がった</p>
+
+<ol>
+<li>rubyの処理系を<a href="http://www.rubyenterpriseedition.com/">REE(2012 02)</a>に変更し、計測した結果</li>
+</ol>
+<pre class="highlight text">Score: 13.786 (get=8.400, comment=5.386(6), check=1.000)
+</pre>
+<p>10を超えた</p>
+
+<ol>
+<li>MySQLの設定(my.cnf)に最低限の設定を行い、ruby処理系を1.9.3p194に変え計測した結果</li>
+</ol>
+<pre class="highlight text">Score: 21.684 (get=14.100, comment=7.584(8), check=1.000)
+</pre>
+<p>20を超えた</p>
+
+<h1>結果</h1>
+
+<p>スコアの結果、4位入賞となりました。</p>
+
+<h1>調整を行った内容</h1>
+
+<ul>
+<li>rubyの処理系を1.8.7から1.9.3p194に変更した
+
+<ul>
+<li>REE 2012.02 よりもスコアがました。長期運用ではことなるかも。</li>
+</ul></li>
+<li>MySQLでのmy.cnfの設定を最低限施した</li>
+</ul>
+<pre class="highlight text">[mysqld]
+innodb_buffer_pool_size=512M
+innodb_log_file_size=128M
+innodb_log_buffer_size=32M
+sort_buffer_size=2M
+read_rnd_buffer_size=2M
+join_buffer_size=2M
+read_buffer_size=2M
+key_buffer_size=256M
+</pre>
+<ul>
+<li>nginx + unicornというproxy + アプリケーションという構成にした
+
+<ul>
+<li>nginxについてはmemcached側にキャッシュを入れる形で設定をした</li>
+</ul></li>
+</ul>
+
+<h1>TOPの方々</h1>
+
+<p>TOPだった方々はスコアが1000を超えており、異常だった。理由を聞いてみたところ
+<a href="https://www.varnish-cache.org/">varnish</a>を使う &amp; 計測スクリプトの
+POSTとGET(POSTをされるとキャッシュがpurgeされてしまう)の内容を確認、
+且つアプリケーション側へのリクエストを見て、POSTの後のGET回数が一定なので
+GET分、POSTにしくじってもスコアを稼げると判断し、varnishの設定を行ったらしい。
+アプリケーションの負荷軽減についてユーザーパターンのチェックを行うことで
+最適な状態に持っていけるんだな(当たり前だけど)ということを思いました。</p>
+
+<h1>次</h1>
+
+<p>次があったらまた参加したいですね</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

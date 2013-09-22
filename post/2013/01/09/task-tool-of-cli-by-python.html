@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - Task tool of cli by python</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>PythonでRakeみたいなものがほしい</h1>
+
+<p><a href="http://www.scons.org/">Scons</a>や<a href="http://code.google.com/p/waf/">waf</a>などのビルドツールがあるけど、なんかRakeとは違う。
+ソフトウェアをビルドする用途のものだし、タスクを実行するようなものではない。
+<a href="http://paver.github.com/paver/">paver</a>はタスクを登録して実行できるようだけど、setuputils風の関数に設定を書いたりとかちょっと面倒そう。
+<a href="https://github.com/alexcepoi/cake">Cake</a>はそこそこ良いけどもうちょっと簡単なものがないかな、
+って思って探したら<a href="https://github.com/rags/pynt">pynt</a>というものを見つけました。
+ということで早速使ってみます。</p>
+
+<p></p>
+
+<h1>pyntをインストールする</h1>
+
+<h2>Python 2.xをご利用の方々</h2>
+
+<p>PyPIに登録されているので、以下のコマンドを実行するだけでOK。</p>
+<pre class="highlight text">&gt; pip install pynt
+</pre>
+<p>または</p>
+<pre class="highlight text">&gt; easy_install pynt
+</pre>
+<h2>Python 3.3をご利用の方々</h2>
+
+<p>forkしてPython 3.3に対応させました。
+<a href="https://github.com/futoase/pynt">ここのリポジトリ</a>をcloneし、
+対応branchをcheckoutしてもらえるだけでOKです。</p>
+<pre class="highlight text">&gt; git clone git://github.com/futoase/pynt.git
+&gt; cd pynt
+&gt; git checkout -b support-of-the-python3.3 origin/support-of-the-python3.3
+&gt; python setup.py install
+</pre>
+<h1>pyntを使ってtaskを構築する</h1>
+
+<p><a href="https://github.com/futoase/pynt/blob/support-of-the-python3.3/example.py">example.py</a>を参考に、taskを作ってみましょう。</p>
+<pre class="highlight python"><span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding:utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pynt</span> <span class="kn">import</span> <span class="n">task</span><span class="p">,</span> <span class="n">build</span>
+
+<span class="nd">@task</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">whoami</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&#39;whoami&#39;</span><span class="p">))</span>
+
+<span class="nd">@task</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">one</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;one&#39;</span><span class="p">)</span>
+
+<span class="nd">@task</span><span class="p">(</span><span class="n">one</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">two</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;two&#39;</span><span class="p">)</span>
+
+<span class="nd">@task</span><span class="p">(</span><span class="n">two</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">three</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;three&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">build</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">__name__</span><span class="p">],</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+</pre>
+<p>以上のスクリプトに対し、実行権限(chmod +x)を付けて、叩いてみます。</p>
+<pre class="highlight text">&gt; ./test_task.py 
+usage: test_task.py [-h] [-l] [task [task ...]]
+
+positional arguments:
+  task              perform specified task and all it&#39;s dependancies
+
+optional arguments:
+  -h, --help        show this help message and exit
+  -l, --list-tasks  List the tasks
+
+
+Tasks in build file ./test_task.py:
+  one                   
+  three                 
+  two                   
+  whoami  
+</pre>
+<p>Tasks in build file&hellip; にてtask一覧が出たので、試しにtaskを実行してみます。</p>
+<pre class="highlight text">&gt; ./test_task.py whoami                                                
+[ test_task.py - Starting task &quot;whoami&quot; ]
+matsuzakikeiji
+0
+[ test_task.py - Completed task &quot;whoami&quot; ]
+
+&gt; ./test_task.py one                                 
+[ test_task.py - Starting task &quot;one&quot; ]
+one
+[ test_task.py - Completed task &quot;one&quot; ]
+&gt; ./test_task.py two                    
+[ test_task.py - Starting task &quot;one&quot; ]
+one
+[ test_task.py - Completed task &quot;one&quot; ]
+[ test_task.py - Starting task &quot;two&quot; ]
+two
+[ test_task.py - Completed task &quot;two&quot; ]
+&gt; ./test_task.py three 
+[ test_task.py - Starting task &quot;one&quot; ]
+one
+[ test_task.py - Completed task &quot;one&quot; ]
+[ test_task.py - Starting task &quot;two&quot; ]
+two
+[ test_task.py - Completed task &quot;two&quot; ]
+[ test_task.py - Starting task &quot;three&quot; ]
+three
+[ test_task.py - Completed task &quot;three&quot; ]
+</pre>
+<p>Decolatorに関数オブジェクトを渡しておくと、そのtaskとして割り当てられた
+関数を実行した後にデコレートした関数を実行する形になります。</p>
+
+<p>&hellip; 簡易なtask管理スクリプトとしては良いかもしれません。けど、
+できればやはりrakeのようなコマンドとして利用できるとよりいいかな。
+taskを管理しているファイル名ごとに叩くファイル名、pathが異なると面倒なので。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

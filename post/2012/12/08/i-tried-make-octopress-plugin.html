@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - I tried make octopress plugin</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>Octopressのpluginを作る</h1>
+
+<p><a href="http://www.nicovideo.jp/">ニコニコ動画</a>の外部プレイヤーをOctopressのエントリで表示させたい。
+<a href="https://github.com/PeterHamilton/Octopress-Slideshare-Plugin">SlideShareの表示プラグイン</a>を元に書いてみましょう。</p>
+
+<p>{% gist 4244901 %}</p>
+
+<p>試しに使ってみます。</p>
+
+<p>{% nicovideo sm19523929 %}</p>
+
+<p>無事、Octopressのエントリにニコニコ動画の
+外部プレイヤーを埋め込めるようになりました。</p>
+
+<p>使い方、はsmXXXXを入れるだけです。</p>
+<pre class="highlight ruby"><span class="p">{</span><span class="sx">% nicovideo </span><span class="n">sm19523929</span> <span class="sx">%}
+</span></pre>
+<p><a href="https://github.com/futoase/Octopress-Nicovideo-Plugin">githubリポジトリとして公開</a>しました。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

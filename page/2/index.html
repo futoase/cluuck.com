@@ -1,0 +1,317 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+          <p>Page 2 of 3</p>
+
+  
+    <p><a href="/"><< Previous page</a></p>
+  
+  
+    <p><a href="/page/3/">Next page >></a></p>
+  
+
+
+  <h2><a href="/post/2012/12/07/how-to-use-the-primary-key-at-sequel.html">How to use the primary key at sequel</a> <span>Dec  7</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>SequelのModelでPrimary keyで指定した値を設定したい場合</h1>
+
+<p>ふつーに<a href="http://sequel.rubyforge.org/">Sequel</a>でTableとModel作って、
+Primary keyに好きな値を指定してレコードを作ろうとすると
+エラーを吐いてしまいます。</p>
+<pre class="highlight ruby"><span class="c1"># -*- coding:utf-8 -*-</span>
+
+<span class="nb">require</span> <span class="s1">&#39;sequel&#39;</span>
+
+<span class="no">Sequel</span><span class="o">::</span><span class="no">Model</span><span class="nf">.plugin</span><span class="p">(</span><span class="ss">:timestamps</span><span class="p">,</span> <span class="ss">:update_on_create</span><span class="o">=&gt;</span><span class="kp">true</span><span class="p">)</span>
+<span class="no">DB</span> <span class="o">=</span> <span class="no">Sequel</span><span class="nf">.sqlite</span>
+<span class="no">DB</span><span class="nf">.create_table</span> <span class="ss">:users</span> <span class="k">do</span>
+  <span class="n">primary_key</span> <span class="ss">:id</span>
+  <span class="nb">String</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:null</span><span class="o">=&gt;</span><span class="kp">false</span>
+  <span class="no">DateTime</span> <span class="ss">:created_at</span><span class="p">,</span> <span class="ss">:null</span><span class="o">=&gt;</span><span class="kp">false</span>
+  <span class="no">DateTime</span> <span class="ss">:updated_at</span><span class="p">,</span> <span class="ss">:null</span><span class="o">=&gt;</span><span class="kp">false</span>
+<span class="k">end</span>
+
+<span class="k">class </span><span class="nc">User</span> <span class="o">&lt;</span> <span class="no">Sequel</span><span class="o">::</span><span class="no">Model</span><span class="p">(</span><span class="no">DB</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="no">User</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Mario&quot;</span><span class="p">)</span><span class="nf">.save</span>
+<span class="no">User</span><span class="nf">.new</span><span class="p">(</span><span class="ss">:id</span> <span class="o">=&gt;</span> <span class="mi">3</span><span class="p">,</span> <span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Luigi&quot;</span><span class="p">)</span><span class="nf">.save</span>
+
+<span class="nb">puts</span> <span class="s2">&quot;Mario: &quot;</span> <span class="o">+</span> <span class="no">User</span><span class="nf">.find</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Mario&quot;</span><span class="p">)</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="nf">.to_s</span>
+<span class="nb">puts</span> <span class="s2">&quot;Luigi: &quot;</span> <span class="o">+</span> <span class="no">User</span><span class="nf">.find</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">&quot;Luigi&quot;</span><span class="p">)</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="nf">.to_s</span>
+</pre>
+<p>以上のコードを実行すると、</p>
+<pre class="highlight text">vendor/bundle/ruby/1.9.1/gems/sequel-3.42.0/lib/sequel/model/base.rb:1775:in `block in set_restricted&#39;: id is a restricted primary key (Sequel::Error)
+</pre>
+<p>うおっ、Luigiのidに3を指定することができない&hellip;</p>
+
+<p>
+  <a href="/post/2012/12/07/how-to-use-the-primary-key-at-sequel.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/12/06/i-tried-use-js-translator.html">I tried use js translator</a> <span>Dec  6</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>沢山あるJavaScriptへのトランスレータ</h1>
+
+<p><a href="https://github.com/jashkenas/coffee-script">CoffeeScript</a>や、
+Microsoftが出した<a href="http://www.typescriptlang.org/">TypeScript</a>、
+Googleが出した<a href="http://www.dartlang.org/">Dart</a>、DeNAが出した<a href="http://jsx.github.com/">JSX</a>などなど、
+沢山のJavaScriptへのトランスレータ(テンプレート言語)があります。</p>
+
+<p>全部どのぐらい有るんだろう、ということについては把握していないんですが、
+この前Twitterのタイムラインで<a href="https://github.com/jashkenas/coffee-script/wiki/List-of-languages-that-compile-to-JS">List-of-languages-that-compile-to-JS</a>というCoffeeScript-github-repositoryのwikiにある記事へのリンクが流れていたので、
+色々あるんだなぁと感心しました。</p>
+
+<p>
+  <a href="/post/2012/12/06/i-tried-use-js-translator.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/12/05/try-to-use-the-sakura-board.html">Try to use the Sakura board</a> <span>Dec  5</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>Sakura board をいじる</h1>
+
+<p><a href="http://sakuraboard.net/">Sakura board</a> を買ったままそのまま時が過ぎてしまい、
+書くこともないし試しにいじってみようかな、と思ったので
+Sakura board をいじる、という内容で書いてみます。</p>
+
+<h1>Sakura board とは</h1>
+
+<p><a href="http://www.arduino.cc/">Arduino</a>互換のボードで、基盤がピンク色。
+プログラムを実行するための環境として
+クラウド上でのコンパイル環境が整備されており、
+ユーザーとして最初にボードの挙動などを確認する程度であれば
+用意するものはUSB &lt;-> mini USBケーブル1本と
+PC (MacもOK)があれば良いという親切な環境が整っています。</p>
+
+<p>
+  <a href="/post/2012/12/05/try-to-use-the-sakura-board.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/12/04/facebook-graph-api-slash-app.html">facebook graph api /app</a> <span>Dec  4</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>facebookのOAuth認証について</h1>
+
+<p>自分で作成したfacebookアプリケーションへの登録をしているか
+確認した後、Graph APIの/meでユーザーの情報を取得する場合、
+以下の問題が考えられます。</p>
+
+<ol>
+<li>&ldquo;A&quot;というアプリケーションについて、&quot;Z&quot;というユーザーは登録した</li>
+<li>&quot;B&quot;というアプリケーションについても、&quot;Z&quot;というユーザーは登録した</li>
+<li>&quot;B&quot;アプリケーションのプロバイダーが、&quot;Z&quot;が自己のアプリに登録しているのか、&quot;Z&quot;が保持しているOAuthトークンを元に確認した。</li>
+<li>この時、&quot;Z&quot;が払いだしてきたOAuthトークンは&quot;A&quot;のものだったが、facebook側では&quot;A&quot;を認証しているか、という確認になるため、SUCCESSを返す。</li>
+<li>&quot;B&quot;アプリケーションのプロバイダーはfacebookからのレスポンスが正常だったため、Graph APIでユーザーの情報を取得しようとする。</li>
+</ol>
+
+<p>これはありがちな問題、ということで<a href="http://oauth.jp/oauth-20-implicit-flow-78852">話に上がっていたり</a>しています。
+職場で教えてもらったりしました。OAuthトークンを元にしたアプリケーション情報の取得については
+<a href="https://developers.facebook.com/docs/howtos/login/login-as-app/">Step 2. Make Requests to the API項</a>に書かれています。</p>
+
+<p>
+  <a href="/post/2012/12/04/facebook-graph-api-slash-app.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/12/03/try-to-make-the-twitter-bot.html">Try to make the twitter bot</a> <span>Dec  3</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>HerokuでTwitter botを作る</h1>
+
+<p><a href="http://www.heroku.com/">Heroku</a>を利用し、Twitter botを作るための環境及びサンプルを作ってみましょう。
+言語については<a href="http://www.ruby-lang.org/">Ruby</a>を使います。簡単なので。</p>
+
+<h1>Twitterアプリケーションの登録</h1>
+
+<p>Twitterアプリケーションについては、<a href="https://dev.twitter.com/">Twitter Developers</a>より
+アプリケーションの追加を行えます。詳細は端折ります&hellip;
+アプリケーションの登録を済ませたら、Consumer key, Consumer secretをメモっておきます。
+また、今回は自分自身のアカウントで発言を行うbotを登録するつもりですので、
+アプリケーションの設定画面の&quot;Your access token&quot;項より、
+&ldquo;Create my access token&quot;ボタンを押してAccess token、Access token secretを取得しましょう。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-make-the-bot/screen-1.png" /></p>
+
+<h2>Twitter bot用アカウントについてアプリケーション認証に通す</h2>
+
+<p><a href="https://github.com/sferik/twitter">gem twitter</a>を利用すれば簡単に行えます。</p>
+
+<p>
+  <a href="/post/2012/12/03/try-to-make-the-twitter-bot.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/12/02/i-tried-to-use-redis-2-dot-6.html">I tried to use redis 2.6</a> <span>Dec  2</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>Redis 2.6から内包されているLuaを試す</h1>
+
+<p><a href="http://redis.io/">Redis 2.6</a>に内包されている<a href="http://www.lua.org/">Lua</a>について挙動を確認したいと思います。
+というかいつの間にかRedis 2.6.6がリリースされているし、チェックを怠りすぎてしまっていました。</p>
+
+<h1>Mac OS X で動作チェック</h1>
+
+<p>homebrewを利用してRedisをインストールするのがとても簡単です。というかそれで充分です。</p>
+<pre class="highlight text">&gt; homebrew install redis
+</pre>
+<p>redis-serverコマンドによってredisを起動します。</p>
+<pre class="highlight text">&gt; redis-server /usr/local/etc/redis.conf       
+[3295] 02 Dec 22:59:46.845 * Max number of open files set to 10032
+
+                _._                                                 
+           _.-``__ &#39;&#39;-._                                            
+      _.-``    `.  `_.  &#39;&#39;-._           Redis 2.6.6 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ &#39;&#39;-._                                  
+ (    &#39;      ,       .-`  | `,    )     Running in stand alone mode
+ |`-._`-...-` __...-.``-._|&#39;` _.-&#39;|     Port: 6379
+ |    `-._   `._    /     _.-&#39;    |     PID: 3295
+  `-._    `-._  `-./  _.-&#39;    _.-&#39;                                  
+ |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|                                 
+ |    `-._`-._        _.-&#39;_.-&#39;    |           http://redis.io       
+  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;                                  
+ |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|                                 
+ |    `-._`-._        _.-&#39;_.-&#39;    |                                 
+  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;                                  
+      `-._    `-.__.-&#39;    _.-&#39;                                      
+          `-._        _.-&#39;                                          
+              `-.__.-&#39;                                              
+[3295] 02 Dec 22:59:46.846 # Server started, Redis version 2.6.6
+[3295] 02 Dec 22:59:46.849 * DB loaded from disk: 0.003 seconds
+[3295] 02 Dec 22:59:46.849 * The server is now ready to accept connections on port 6379
+</pre>
+<p>いつの間にAAがでるように&hellip;</p>
+
+<p>
+  <a href="/post/2012/12/02/i-tried-to-use-redis-2-dot-6.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/12/01/unittest-dot-mock.html">unittest.mock</a> <span>Dec  1</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>unittest.mock</h1>
+
+<p>Python 3.3から<a href="http://docs.python.org/3/library/unittest.mock.html">unittest.mock</a>というライブラリが追加されたという話が
+<a href="http://togetter.com/li/412188">pyfes 2012.11</a>であったのでちょっとだけ触ってみます。</p>
+<pre class="highlight python"><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">unittest.mock</span> <span class="kn">import</span> <span class="n">Mock</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">con</span> <span class="o">=</span> <span class="n">mock</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">con</span>
+<span class="o">&lt;</span><span class="n">Mock</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;mock.connect()&#39;</span> <span class="nb">id</span><span class="o">=</span><span class="s">&#39;4492027600&#39;</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cur</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cur</span>
+<span class="o">&lt;</span><span class="n">Mock</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;mock.connect().cursor()&#39;</span> <span class="nb">id</span><span class="o">=</span><span class="s">&#39;4492027920&#39;</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s">&#39;SELECT * FROM test&#39;</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">Mock</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;mock.connect().cursor().execute()&#39;</span> <span class="nb">id</span><span class="o">=</span><span class="s">&#39;4492028304&#39;</span><span class="o">&gt;</span>
+</pre>
+<p>Mockに対しspec引数に特定のオブジェクトを渡すとそのオブジェクトの振る舞いをします。
+&hellip;これだけじゃあ使い物になるかどうか判断つかないなーと思ってドキュメントを見行ったら、
+ら<a href="http://docs.python.org/3/library/unittest.mock.html#unittest.mock.create_autospec">create_autospec</a>という便利なヘルパーがありました。</p>
+
+<p>
+  <a href="/post/2012/12/01/unittest-dot-mock.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/11/26/how-to-use-ghost-dot-py.html">How to use Ghost.py</a> <span>Nov 26</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>Ghost.py</h1>
+
+<p><a href="http://jeanphix.me/Ghost.py/">Ghost.py</a>という、<a href="http://www.pyside.org">PySide</a> or <a href="http://www.riverbankcomputing.co.uk/software/pyqt/intro">PyQt</a>を利用し<a href="http://trac.webkit.org/wiki/QtWebKit">QtWebKit</a>を利用するためのラッパーが存在します。似たようなものだと<a href="http://phantomjs.org">phantom.js</a>や<a href="https://github.com/thoughtbot/capybara-webkit">Capybara-WebKit</a>があります。これを試しに使ってみようかな〜と思ったので以下に使用手順をMac OS X、Ubuntu Server 12.04.1 LTSでの内容を書きます。</p>
+
+<p>Ghost.pyはPySide,PyQtどちらでも利用できるように書かれているのですが、今回はPySideを利用する形をとりました。</p>
+
+<h2>Ghost.pyとは</h2>
+
+<ul>
+<li>PySide及びPyQtを利用しQtWebKitを使ったウェブブラウジングが可能なラッパー
+
+<ul>
+<li>Javascriptの実行もOK。</li>
+<li>QtWebKitを利用してスクショが撮れます。</li>
+</ul></li>
+</ul>
+
+<p>
+  <a href="/post/2012/11/26/how-to-use-ghost-dot-py.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/11/23/nginx-custom-503-page.html">nginx custom 503 page</a> <span>Nov 23</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>サイトメンテナンス時のHTTP Status codeについて</h1>
+
+<p>ついうっかり、サイトのメンテナンス状態にするときにHTTP Status codeを200で返してしまう状態にしていて、メンテナンス状態の内容がGoogleにキャッシュされるようになってしまっていた。メンテナンス中はHTTP Status code 503を吐き出すようにしたい。</p>
+
+<h1>nginxでのカスタム503ページ設定</h1>
+
+<p>メンテナンス時にだけ起動するEC2インスタンスを用意しちゃう、ということでアプリ用のインスタンスについて影響を出来るだけ出さないようにする、という前提で。</p>
+
+<ul>
+<li>/ (root path)にアクセスしてきた場合にカスタム・メンテナンスページを出す</li>
+<li>/static 以下にはcss, js, jpg, pngなどの静的ファイルを置くが、そのリソースを要求しても503を返してはいけない</li>
+</ul>
+
+<p>以上の要求を満たす、nginxの設定ファイルの書き方は以下の通り。</p>
+
+<p>
+  <a href="/post/2012/11/23/nginx-custom-503-page.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/09/01/pyqcheck-release.html">pyqcheck-release</a> <span>Sep  1</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>PyQCheckをリリースしました。</h1>
+
+<p><a href="https://github.com/futoase/PyQCheck">Github上のリポジトリ</a>のREADME.mdにインストール方法を書いておきました。ここで改めてインストール方法については記載することは省略します。</p>
+
+<h2>PyQCheckとはなんなのか</h2>
+
+<p>README.mdに書いているんですが、Quick check-likeなランダムデータをとある関数に対して渡して返り値を確認することでとある関数が正常に動作しているのかテストを行うことができるテストフレームワークとなっております。</p>
+
+<h2>注意点</h2>
+
+<p>Python 2.7.3 での動作を確認しています。Python 3.xは多分対応していません。(エラー処理のキャッチ部分を直さないといけないので&hellip;) 2to3 した後の動作確認を行うのが面倒なので、今後のバージョンアップに関しては Python 3.3 以上を対象としていきます&hellip;</p>
+
+<h1>テストを書いてみよう</h1>
+
+<p>適当なテストスクリプトについては以下にありますが、例を書いてみましょう。</p>
+
+<p>
+  <a href="/post/2012/09/01/pyqcheck-release.html">Read more >></a>
+  <hr/>
+
+  
+    <p><a href="/page/3/">Next page >> </a></p>
+  
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - a make new blog</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>Octopressを使うようにしてみた。</h1>
+
+<p>Markdownで書いていくし、記事についてはgitで
+履歴管理がなされるし、これでいいやって思ったので
+使ってみる。技術記事について書きやすそうだし。</p>
+
+<h1>Octopressをgithub上で展開していくためには</h1>
+
+<p>以下に簡単に構築手順を書いておく。オフィシャルにある
+<a href="http://octopress.org/docs/setup/">ドキュメント</a>を参考にしながらやった。</p>
+
+<p></p>
+
+<h2>必要な環境</h2>
+
+<p>2012-05-27 現在、利用するrubyのバージョンが1.9.2を
+要求しているため、rvm及びrbenvなどを利用して指定バージョンの
+rubyを入れておくこと。ソースからのビルドでも良いけれど。</p>
+
+<ul>
+<li>参考(オフィシャル)</li>
+</ul>
+<pre class="highlight text">$ rvn install 1.9.2 &amp;&amp; rvn use 1.9.2
+</pre><pre class="highlight text">$ rbenv install 1.9.2-p290
+$ rbenv global 1.9.2-p290
+$ rbenv rehash
+</pre>
+<ul>
+<li>それぞれ、リポジトリROOTの<a href="https://github.com/imathis/octopress/blob/master/.rvmrc">.rvmrc</a>, <a href="https://github.com/imathis/octopress/blob/master/.rbenv-version">.renv-version</a>で指定されている</li>
+</ul>
+
+<h2>Octopressのダウンロードから初期動作確認まで</h2>
+<pre class="highlight text">$ git clone git://github.com/imathis/octopress.git octopress
+$ cd octopress
+$ gem install bundler
+$ rbenv rehash
+$ bundler install
+$ rake install
+$ rake generate
+$ rake preview
+</pre>
+<ul>
+<li>rake previewを行うとサーバが立ち上がり、確認可能な状態になる</li>
+</ul>
+<pre class="highlight text">% rake preview
+Starting to watch source with Jekyll and Compass. Starting Rack on port 4000
+Configuration from /Users/matsuzakikeiji/Sandbox/test_oct/_config.yml
+[2012-05-27 20:18:50] INFO  WEBrick 1.3.1
+[2012-05-27 20:18:50] INFO  ruby 1.9.2 (2011-07-09) [x86_64-darwin11.4.0]
+[2012-05-27 20:18:50] INFO  WEBrick::HTTPServer#start: pid=83303 port=4000
+Auto-regenerating enabled: source -&gt; public
+[2012-05-27 20:18:51] regeneration: 94 files changed
+
+Dear developers making use of FSSM in your projects,
+FSSM is essentially dead at this point. Further development will
+be taking place in the new shared guard/listen project. Please
+let us know if you need help transitioning! ^_^b
+- Travis Tilley
+</pre>
+<h2>_config.yml</h2>
+
+<p>octopressのルート直下にある_config.ymlの内容を変更し、適切なブログ名を設定する。</p>
+<pre class="highlight yaml"><span class="c1"># ----------------------- #</span>
+<span class="c1">#      Main Configs       #</span>
+<span class="c1"># ----------------------- #</span>
+
+<span class="s">url</span><span class="p">:</span> <span class="s">http://futoase.github.com</span>
+<span class="s">title</span><span class="p">:</span> <span class="s">futoase Blog</span>
+<span class="s">subtitle</span><span class="p">:</span> <span class="s">A Tech Blog.</span>
+<span class="s">author</span><span class="p">:</span> <span class="s">Keiji Matsuzaki</span>
+<span class="s">simple_search</span><span class="p">:</span> <span class="s">http://google.com/search</span>
+<span class="s">description</span><span class="p">:</span>
+</pre>
+<p>編集し終えたら、rake generateをやり直し、内容を確認する。</p>
+<pre class="highlight text">$ rake generate
+$ rake preview
+</pre>
+<p>タイトルが変わっている。</p>
+
+<h2>記事投稿について</h2>
+
+<p>記事投稿は、rake &ldquo;new<em>post[title]&rdquo; という形で行う。
+実行するとsource/</em>postsの下に記事用のファイルが作成される。</p>
+<pre class="highlight text">$ rake &quot;new_post[test title]&quot;
+mkdir -p source/_posts
+Creating new post: source/_posts/2012-05-27-test-title.markdown
+$ cd source/_posts
+$ ls
+2012-05-27-test-title.markdown
+</pre>
+<p>既に著者名などは設定されているので(Markdown形式)、
+あとは記事を書き進めていけばよい。</p>
+<pre class="highlight text">---
+layout: post
+title: &quot;test title&quot;
+date: 2012-05-27 20:29
+comments: true
+tags: 
+---
+
+# 今日も毎日が日曜日だ
+
+- た、楽しいなあ
+- う、うれしいなあ
+
+## いつの間にか時間が経過したらもう夕方
+
+- 明日がんばろう 
+</pre>
+<p>rake previewでサーバを起動したままの状態で記事の編集をすれば、都度リロードしてくれる。</p>
+
+<h2>github pages上で利用したい</h2>
+
+<p><a href="http://octopress.org/docs/deploying/github/">オフィシャルのドキュメント</a>にて方法が記載されている。</p>
+<pre class="highlight text">$ rake setup_github_pages
+Enter the read/write url for your repository: git@github.com:futoase/futoase.github.com.git
+rm -rf public
+mkdir -p public/hoge
+## Site&#39;s root directory is now &#39;/hoge&#39; ##
+rm -rf _deploy
+mkdir _deploy
+cd _deploy
+Initialized empty Git repository in /Users/matsuzakikeiji/SandBox/octopress/_depl
+oy/.git/
+[master (root-commit) c079225] Octopress init
+ 1 file changed, 1 insertion(+)
+ create mode 100644 index.html
+cd -
+
+---
+## Now you can deploy to http://futoase.github.com/hoge with `rake deploy` ##
+$ rake generate
+$ rake deploy
+</pre>
+<p>rake deployを行った後、futoase.github.comにアクセスして確認できれば終了。
+あとは毎日、rake &ldquo;new_post[title]&quot;して、rake generate して rake preview して確認した後に git add して git commit して rake deployすれば良い。気楽。</p>
+
+<h2>悩んでること</h2>
+
+<p>画像ファイル、image pluginで画像をエントリに使えるけど置き場所どこにしようか&hellip;と。githubで管理するなら、souces/_images とか作成しちゃえばいいんだろうけど。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

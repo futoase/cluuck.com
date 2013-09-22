@@ -1,0 +1,239 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - Try to make the twitter bot</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>HerokuでTwitter botを作る</h1>
+
+<p><a href="http://www.heroku.com/">Heroku</a>を利用し、Twitter botを作るための環境及びサンプルを作ってみましょう。
+言語については<a href="http://www.ruby-lang.org/">Ruby</a>を使います。簡単なので。</p>
+
+<h1>Twitterアプリケーションの登録</h1>
+
+<p>Twitterアプリケーションについては、<a href="https://dev.twitter.com/">Twitter Developers</a>より
+アプリケーションの追加を行えます。詳細は端折ります&hellip;
+アプリケーションの登録を済ませたら、Consumer key, Consumer secretをメモっておきます。
+また、今回は自分自身のアカウントで発言を行うbotを登録するつもりですので、
+アプリケーションの設定画面の&quot;Your access token&quot;項より、
+&ldquo;Create my access token&quot;ボタンを押してAccess token、Access token secretを取得しましょう。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-make-the-bot/screen-1.png" /></p>
+
+<h2>Twitter bot用アカウントについてアプリケーション認証に通す</h2>
+
+<p><a href="https://github.com/sferik/twitter">gem twitter</a>を利用すれば簡単に行えます。</p>
+
+<p></p>
+
+<p>gem twitterを利用しテスト用アカウントに対し書き込みのテストをします。
+書き込みのテストをする場合はアプリケーションの設定をRead &amp; Writeにしなければならないことに注意をしてください。</p>
+<pre class="highlight ruby"><span class="nb">require</span> <span class="s1">&#39;twitter&#39;</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="no">Twitter</span><span class="o">::</span><span class="no">Client</span><span class="nf">.new</span><span class="p">(</span>
+  <span class="ss">:consumer_key</span> <span class="o">=&gt;</span> <span class="s1">&#39;Consumer key&#39;</span><span class="p">,</span>
+  <span class="ss">:consumer_secret</span> <span class="o">=&gt;</span> <span class="s1">&#39;Consumer secret&#39;</span><span class="p">,</span>
+  <span class="ss">:oauth_token</span> <span class="o">=&gt;</span> <span class="s1">&#39;OAuth token&#39;</span><span class="p">,</span>
+  <span class="ss">:oauth_token_secret</span> <span class="o">=&gt;</span> <span class="s1">&#39;OAuth token secret&#39;</span>
+<span class="p">)</span>
+<span class="n">t</span><span class="nf">.update</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">)</span> 
+</pre>
+<p>ツイートされたかテストアカウントを確認してみます。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-make-the-bot/screen-3.png" /></p>
+
+<p>無事&quot;hoge&quot;とツイートされました。</p>
+
+<h1>Herokuとの連携</h1>
+
+<h2>Heroku toolbelt</h2>
+
+<p>ここまででやっとHerokuとの連携を開始します。
+Herokuを利用するには<a href="https://toolbelt.heroku.com/">Heroku toolbelt</a>を使います。
+インストール後、herokuコマンドを実行し認証を済ませます。</p>
+<pre class="highlight text">&gt; heroku login
+Enter your Heroku credentials.
+Email: login@hogehoge.com
+Password (typing will be hidden):
+Authentication successful.
+</pre>
+<h2>アプリケーションの作成</h2>
+
+<p>認証が通ったので、アプリケーションの作成に取り掛かります。 </p>
+<pre class="highlight text">&gt; mkdir twitter-bot
+&gt; cd twitter-bot
+</pre>
+<p>Gemfileに依存するgemを書きます。
+一旦認証してしまったので、botアカウントへの書き込みに関して
+gem twitterしか利用しません。Gemfileに記述する内容は以下の形になります。</p>
+<pre class="highlight ruby"><span class="n">source</span> <span class="s2">&quot;https://rubygems.org&quot;</span> 
+<span class="n">gem</span> <span class="s2">&quot;twitter&quot;</span><span class="p">,</span> <span class="ss">:group</span> <span class="o">=&gt;</span> <span class="ss">:production</span> 
+</pre>
+<p>bundlerを利用し、依存するgemのインストールを行います。</p>
+<pre class="highlight text">&gt; bundle install --path vendor/bundle
+Fetching gem metadata from https://rubygems.org/...........
+Fetching gem metadata from https://rubygems.org/..
+Installing multipart-post (1.1.5)
+Installing multi_json (1.4.0)
+Installing simple_oauth (0.1.9)
+Installing twitter (4.4.0)
+Using bundler (1.2.2)
+Your bundle is complete! It was installed into ./vendor/bundle
+</pre>
+<p>Procfileを作成します。Herokuアプリケーションの
+ワーカー起動に関する記述をします。
+ここでは、bundle execにてrubyを起動する形を取ります。</p>
+<pre class="highlight text">web: bundle exec ruby app.rb
+</pre>
+<h2>app.rbの記述</h2>
+
+<p>app.rbについてテスト動作を確認したいため、以下の内容を記述しましょう</p>
+<pre class="highlight ruby"><span class="c1"># -*- coding:utf-8 -*-</span>
+
+<span class="nb">puts</span> <span class="s2">&quot;hello world&quot;</span>
+</pre>
+<p>foremanコマンドを利用し、ローカルにてアプリケーションの挙動を確認します。</p>
+<pre class="highlight text">foreman start
+
+01:46:02 web.1  | started with pid 25763
+01:46:03 web.1  | hello world
+01:46:03 web.1  | exited with code 0
+</pre>
+<p>無事、app.rbはhello worldを行いました。
+gem twitterを利用しツイートを行うか確認してみます。</p>
+<pre class="highlight ruby"><span class="c1"># -*- coding:utf-8 -*-</span>
+<span class="nb">require</span> <span class="s1">&#39;twitter&#39;</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="no">Twitter</span><span class="o">::</span><span class="no">Client</span><span class="nf">.new</span><span class="p">(</span>
+  <span class="ss">:consumer_key</span> <span class="o">=&gt;</span> <span class="s1">&#39;Consumer key&#39;</span><span class="p">,</span>
+  <span class="ss">:consumer_secret</span> <span class="o">=&gt;</span> <span class="s1">&#39;Consumer secret&#39;</span><span class="p">,</span>
+  <span class="ss">:oauth_token</span> <span class="o">=&gt;</span> <span class="s1">&#39;OAuth token&#39;</span><span class="p">,</span>
+  <span class="ss">:oauth_token_secret</span> <span class="o">=&gt;</span> <span class="s1">&#39;OAuth token secret&#39;</span>
+<span class="p">)</span>
+<span class="n">client</span><span class="nf">.update</span><span class="p">(</span><span class="s1">&#39;ugege&#39;</span><span class="p">)</span>
+</pre>
+<p>foremanにて動作させます。
+動作させたあと、アカウントの内容を確認すると、
+きちんとツイートされていました。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-make-the-bot/screen-4.png" /></p>
+
+<h2>herokuアプリとして登録をしてみる</h2>
+
+<p>herokuアプリとして登録するためには、以下の手順が必要です。
+- git init を行う
+- git commit を行う
+- heroku create を行う(remote herokuにリポジトリが結び付けられて便利)
+- git push heroku masterを行う</p>
+
+<p>先ほどbundleによるgemのインストール先をvendor/bundleにしたため、
+以下の形で無視リスト(.gitignore)に追加します。</p>
+<pre class="highlight text">&gt; touch .gitignore
+&gt; vi .gitignore
+.gitignore
+.bundle/*
+vendor/*
+</pre>
+<p>.gitignoreを追加したら、git init, git add ., git commitを行い、
+heroku createを実行します。</p>
+<pre class="highlight text">&gt; heroku create                               
+Creating boiling-coast-9332... done, stack is cedar
+</pre>
+<p>heroku create後にgit push heroku masterを実行し、アプリをpublishします。
+これでアプリケーションを作成できました。だけどこれだと無意味なツイートを1回だけ行うアプリを作っただけなので、きちんとcronを利用しジョブを定期的に実行するようなサンプルを作ってみましょう。</p>
+
+<h2>Heroku Schedulerを利用する</h2>
+
+<p><a href="https://addons.heroku.com/catalog/scheduler">Heroku Scheduler</a>を利用すれば、10分毎の粒度でジョブを立ちあげさせることが可能です。
+先ほど作成したアプリケーションより、Add on追加を選択し、Heroku Schedulerを追加します。</p>
+
+<p>追加後、以下の形で10分毎ごとにジョブを実行させるようにします。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-make-the-bot/screen-5.png" /></p>
+
+<p>10分毎ごとにTime.now.to_sをつぶやく意味のあるのかわからないような動作をさせてみるサンプルコードを書きます。</p>
+<pre class="highlight ruby"><span class="c1"># -*- coding:utf-8 -*-</span>
+
+<span class="nb">require</span> <span class="s1">&#39;time&#39;</span>
+<span class="nb">require</span> <span class="s1">&#39;twitter&#39;</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="no">Twitter</span><span class="o">::</span><span class="no">Client</span><span class="nf">.new</span><span class="p">(</span>
+  <span class="ss">:consumer_key</span> <span class="o">=&gt;</span> <span class="s1">&#39;Consumer key&#39;</span><span class="p">,</span>
+  <span class="ss">:consumer_secret</span> <span class="o">=&gt;</span> <span class="s1">&#39;Consumer secret&#39;</span><span class="p">,</span>
+  <span class="ss">:oauth_token</span> <span class="o">=&gt;</span> <span class="s1">&#39;OAuth token&#39;</span><span class="p">,</span>
+  <span class="ss">:oauth_token_secret</span> <span class="o">=&gt;</span> <span class="s1">&#39;OAuth token secret&#39;</span>
+<span class="p">)</span>
+<span class="n">client</span><span class="nf">.update</span><span class="p">(</span><span class="no">Time</span><span class="nf">.now.to_s</span><span class="p">)</span>
+</pre>
+<p>以上のコードをapp.rbに反映し終えたらgit push heroku masterを実行し、
+&hellip; Heroku Schedulerが実行されるのを静かに待ちます。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-make-the-bot/screen-6.png" /></p>
+
+<p>反映されたようです。(LAST RUNの内容を見ればわかる)
+早速ツイートの内容を見てみます。</p>
+
+<p><img alt="Screen shot" src="https://dl.dropbox.com/u/614755/futoase.github.com/try-to-make-the-bot/screen-7.png" /></p>
+
+<p>おお、更新された&hellip;とはいえ、時刻がUTCのままになっています。</p>
+
+<h3>heroku consoleによるTime Zoneの変更</h3>
+
+<p>一旦アプリケーションをHerokuにpublishすれば、heroku run consoleコマンドによりアプリケーション側のインスタンス内にてconsoleが実行できます。</p>
+<pre class="highlight text">&gt; heroku run console
+Running `console` attached to terminal... up, run.3037
+irb(main):002:0&gt; Time.now.to_s
+=&gt; &quot;2012-12-03 17:29:19 +0000&quot;
+</pre>
+<p>時差については+0000 であり、タイムゾーンはUTCであることがわかります。
+東京に設定します。heroku consoleを終了させてから、以下のコマンドを実行します。</p>
+<pre class="highlight text">&gt; heroku config:add TZ=Asia/Tokyo
+Setting config vars and restarting boiling-coast-9332... done, v5
+TZ: Asia/Tokyo
+</pre>
+<p>再度 heroku consoleを実行し、Time.now.to_sの内容を確認します。</p>
+<pre class="highlight text">&gt; heroku run console
+irb(main):001:0&gt; Time.now.to_s
+=&gt; &quot;2012-12-04 02:30:42 +0900&quot;
+</pre>
+<p>やりました。これでbot作りが捗りそうです。</p>
+
+<p>日本語の取り扱いを行う場合は、環境変数LANGをja_JP.UTF-8にしておきます。</p>
+<pre class="highlight text">heroku config:add LANG=ja_JP.UTF-8
+</pre>
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

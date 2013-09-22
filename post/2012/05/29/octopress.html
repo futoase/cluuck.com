@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - backup repository of octopress</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>忘れていた。</h1>
+
+<p>octopressについてリポジトリをgit cloneして、そのあとrake setup github pages を行った後、rake deployしていた(_deployリポジトリ以下にgithub pages向けのリモートリポジトリが設定される)。でもこのままだとローカルにあるoctopressもといBlogの元データがバックアップされてねーじゃん、ということに気がついたのでgithubにfutoase.github.com.souceなるリポジトリを作成した。</p>
+
+<h2>バックアップ用リポジトリ作成から投稿できるようにするまで</h2>
+
+<ol>
+<li>githubにバックアップ用のリポジトリを作成する</li>
+<li>octopressローカルリポジトリよりgit add remoteを行い、sourceブランチを(1)で作成したリポジトリにpushする</li>
+<li>rake setup<em>github</em>pages で、念の為にdeploy先をfutoase.github.comにする</li>
+</ol>
+
+<p></p>
+<pre class="highlight text">$ cd octopress # octopressをgit cloneしたディレクトリ
+$ git add remote backup git@github.com:futoase/futoase.github.com.source.git
+$ git add remote octopress git://github.com/imathis/octopress.git # octopressが更新された場合にpullできるように
+$ git push backup source
+</pre>
+<ul>
+<li>Blog作成元用のリポジトリをcloneし、rake deployする</li>
+</ul>
+<pre class="highlight text">$ git clone git@github.com:futoase/futoase.github.com.source.git
+$ cd futoase.github.com.source
+$ rake setup_github_pages
+$ rake generate
+$ rake preview
+$ rake deploy
+</pre>
+<p>これで大丈夫なはず。ただ、書きかけのエントリについてもgithubに持たせたいとなるとpublicで公開しているので、privateリポジトリを利用できるようお金を使うか、bitbucketにprivateリポジトリを作成してそこでoctopressのソースを管理するか、になりそうだ。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

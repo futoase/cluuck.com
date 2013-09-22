@@ -1,0 +1,220 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+          <p>Page 1 of 3</p>
+
+  
+  
+    <p><a href="/page/2/">Next page >></a></p>
+  
+
+
+  <h2><a href="/post/2013/09/22/improvment-of-blog-template.html">improvement of blog template</a> <span>Sep 22</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <p><a href="https://github.com/futoase/cluuck.com/commit/a22a2d48f7a4b06c21fd5545dc0de0988852660a">ブログテンプレートを改善</a>して、titleタグにエントリのタイトルを入れるようにした。
+はてブするときに入るようになったしよかった。</p>
+
+  <a href="/post/2013/09/22/improvment-of-blog-template.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2013/09/18/python-guide.html">python guide</a> <span>Sep 18</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>Python Guide</h1>
+
+<p><a href="https://github.com/trending?l=python">Trending Python repositories on Github today</a>のフィードを見ていたら、python-guideを見つけた。</p>
+
+<p><a href="https://github.com/kennethreitz/python-guide">python-guide</a></p>
+
+<p>結構前から(2011年から)あったプロダクトのようだけど、知らなかった。</p>
+
+<p>成果物は既にあって、<a href="http://docs.python-guide.org/en/latest/">The Hitchhiker’s Guide to Python!</a>という題目でまとまってる。</p>
+
+<p><a href="http://docs.python-guide.org/en/latest/#writing-great-code">Writing Great Code</a>を見てみると、コーディングスタイルなどPythonの基本的...</p>
+  <a href="/post/2013/09/18/python-guide.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2013/09/03/use-of-middleman.html">TravisCI auto Use of Middlemanleman</a> <span>Sep  3</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>TravisCIとMiddlemanの連携</h1>
+
+<p>色々とネット上で連携してみた、という
+エントリが出てきていたので、試しにやってみた。
+<code>gh-pages branch</code> については–orphanオプションで親無しのブランチを作成して
+予め用意しておくぐらい。</p>
+
+<p>あとは、<a href="http://tricknotes.hateblo.jp/entry/2013/06/17/020229">Middleman で作った web サイトを Travis + GitHub pages でお手軽に運用する</a>を参考に.travis.ymlを書いて、
+TravisCIでリポジトリを監視対象にして、終わり。</p>
+
+<p>…<code>GIT_COMMITTER_NAME</code></p>
+  <a href="/post/2013/09/03/use-of-middleman.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2013/08/25/change-from-octopress-to-middleman.html">Change from Octprecss to Middleman</a> <span>Aug 25</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>OctopressからMiddlemanに乗り換え</h1>
+
+<p><a href="http://middlemanapp.com/">Middleman</a>という
+静的コンテンツを作成するためのフレームワークがあり、
+ちらほらと<a href="http://octopress.org/">Octopress</a>からMiddlemanに乗り換えたという
+事例をみかけたし、そもそも気になっていたので、変えてみた。</p>
+
+<p>特に不都合なく乗り換えられた。
+Octopressよりは、レイアウトのファイルについて
+構造をつかみやすいので、レイアウト修正は楽だった。</p>
+
+<p>もう少し記事をマトモに読める形にデザインをカスタマイズしていきたい。</p>
+
+  <a href="/post/2013/08/25/change-from-octopress-to-middleman.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2013/01/09/task-tool-of-cli-by-python.html">Task tool of cli by python</a> <span>Jan  9</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>PythonでRakeみたいなものがほしい</h1>
+
+<p><a href="http://www.scons.org/">Scons</a>や<a href="http://code.google.com/p/waf/">waf</a>などのビルドツールがあるけど、なんかRakeとは違う。
+ソフトウェアをビルドする用途のものだし、タスクを実行するようなものではない。
+<a href="http://paver.github.com/paver/">paver</a>はタスクを登録して実行できるようだけど、setuputils風の関数に設定を書いたりとかちょっと面倒そう。
+<a href="https://github.com/alexcepoi/cake">Cake</a>はそこそこ良いけどもうちょっと簡単なものがないかな、
+って思って探したら<a href="https://github.com/rags/pynt">pynt</a>というものを見つけました。
+ということで早速使ってみます。</p>
+
+<p>
+  <a href="/post/2013/01/09/task-tool-of-cli-by-python.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2013/01/06/how-to-use-git-flow.html">How to use git flow</a> <span>Jan  6</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>How to use git flow</h1>
+
+<p>あけましておめでとうございます。
+皆様いかがお過ごしでしょうか？</p>
+
+<p>会社で<a href="https://github.com/nvie/gitflow">git flow</a>を利用したリリース手順・サイクルを繰り返しているのですが、
+正しいのかどうなのかを確認したいため、まとめてみたいと思います。</p>
+
+<p>
+  <a href="/post/2013/01/06/how-to-use-git-flow.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/12/11/aws-sdk-for-node-dot-js.html">AWS SDK for Node.js</a> <span>Dec 11</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>AWS SDK for Node.js</h1>
+
+<p><a href="http://aws.typepad.com/aws_japan/2012/12/aws-sdk-for-nodejs-now-available-in-preview-form.html">AWS SDK for Node.jsのプレビュー版がリリースされた</a>という
+話を聞いたので、試しに利用してみます。</p>
+
+<p><a href="http://docs.amazonwebservices.com/nodejs/latest/dg/nodejs-dg-aws-sdk-for-node.js.html">AWS Documentationに掲載されているサンプル</a>を元に試します。</p>
+
+<h1>npm aws-sdkのセットアップ</h1>
+
+<p>node.jsのセットアップについては、各自ご自由に。
+個人的には<a href="https://github.com/hokaccha/nodebrew">nodebrew</a>を利用する方法をオススメします。</p>
+<pre class="highlight text">&gt; mkdir -p ~/Sandbox/aws-sdk-for-node
+&gt; cd ~/Sandbox/aws-sdk-for-node
+&gt; npm install aws-sdk
+</pre>
+<p>
+  <a href="/post/2012/12/11/aws-sdk-for-node-dot-js.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/12/10/i-tried-use-to-createjs.html">I tried use to CreateJS</a> <span>Dec 10</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>CreateJS</h1>
+
+<p><a href="http://www.createjs.com/">CreateJS</a>というライブラリをAtariが作成した、
+というニュースが今年に夏にありました。</p>
+
+<p><a href="http://www.createjs.com/#!/EaselJS">EaselJS</a>、
+<a href="http://www.createjs.com/#!/TweenJS">TweenJS</a>、 
+<a href="http://www.createjs.com/#!/SoundJS">SoundJS</a>、
+<a href="http://www.createjs.com/#!/PreloadJS">PreloadJS</a>、
+それぞれのライブラリをまとめたものになっています。</p>
+
+<p>
+  <a href="/post/2012/12/10/i-tried-use-to-createjs.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/12/09/i-tried-to-use-the-buster-dot-js.html">I tried to use the Buster.js</a> <span>Dec  9</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>Buster.js</h1>
+
+<p>Buster.jsが良いというプレゼンを見たので、試しにいじってみようかな、と思います。
+(以下、株式会社マピオン 中村 浩士さんのslide share上に上がっているプレゼン資料です)
+{% slideshare 15514542 %}</p>
+
+<h1>動作を確認する</h1>
+
+<h2>環境整備</h2>
+
+<p><a href="http://docs.busterjs.org/en/latest/getting-started/">Geting Started</a>を見ながら環境を整備します。</p>
+<pre class="highlight text">npm install -g buster
+</pre>
+<p>
+  <a href="/post/2012/12/09/i-tried-to-use-the-buster-dot-js.html">Read more >></a>
+  <hr/>
+  <h2><a href="/post/2012/12/08/i-tried-make-octopress-plugin.html">I tried make octopress plugin</a> <span>Dec  8</span></h2>
+  <!-- use article.summary(250) if you have Nokogiri available to show just
+       the first 250 characters -->
+  <h1>Octopressのpluginを作る</h1>
+
+<p><a href="http://www.nicovideo.jp/">ニコニコ動画</a>の外部プレイヤーをOctopressのエントリで表示させたい。
+<a href="https://github.com/PeterHamilton/Octopress-Slideshare-Plugin">SlideShareの表示プラグイン</a>を元に書いてみましょう。</p>
+
+<p>{% gist 4244901 %}</p>
+
+<p>試しに使ってみます。</p>
+
+<p>{% nicovideo sm19523929 %}</p>
+
+<p>無事、Octopressのエントリにニコニコ動画の
+外部プレイヤーを埋め込めるようになりました。</p>
+
+<p>使い方、はsmXXXXを入れるだけです。</p>
+<pre class="highlight ruby"><span class="p">{</span><span class="sx">% nicovideo </span><span class="n">sm19523929</span> <span class="sx">%...</span></pre>
+  <a href="/post/2012/12/08/i-tried-make-octopress-plugin.html">Read more >></a>
+  <hr/>
+
+  
+    <p><a href="/page/2/">Next page >> </a></p>
+  
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

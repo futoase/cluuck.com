@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - How to use git flow</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>How to use git flow</h1>
+
+<p>あけましておめでとうございます。
+皆様いかがお過ごしでしょうか？</p>
+
+<p>会社で<a href="https://github.com/nvie/gitflow">git flow</a>を利用したリリース手順・サイクルを繰り返しているのですが、
+正しいのかどうなのかを確認したいため、まとめてみたいと思います。</p>
+
+<p></p>
+
+<h1>git flow とは</h1>
+
+<p>gitのbranch作成戦略の一つの手、というかテンプレートです。
+branchの作成、mergeの方法(&ndash;no-ff有効にするとか)だのなんだの、
+チーム内のメンバー間でバラバラだと困るし、統一するために利用するためのもの。
+使わなくてもしっかりとlocal, remote branchそれぞれの命名規則や
+mergeの仕方、リリースの仕方について決まっていれば導入する必要はないかもしれません。
+けど、少人数、gitを利用した多人数開発での経験も浅めか、別にbranchを切ったり
+pushしたりの手順を変えても影響がないものプロダクトであれば導入しても問題無いと思います。</p>
+
+<h1>git flowを利用した場合のリリース手順</h1>
+
+<p>リリース手順について以下の手順になります。</p>
+
+<ol>
+<li>issue単位でfeature branchを作る
+
+<ul>
+<li>commitやticketではなく、issue、プロダクトの最小単位でfeature branchを作成するようにします。</li>
+</ul></li>
+<li>feature branch上でcommitしつづける</li>
+<li>feature branchに対し、issueの内容を反映し終え、local上(開発者)での動作チェックが済んだらfeature branchをgit pushする</li>
+<li>origin(upstream)より、development環境上からgit fetch、(3)のbranchの更新内容を取得。git checkout -b branch-name feature branchを行い、テストを出きる状態にする。
+
+<ul>
+<li>既にfeature branch向けのlocal branchを作成しているのであればgit pull feature branchを行いlocal branchにmergeする。</li>
+</ul></li>
+<li>development環境で動作確認ができたらrelease branchを作成する
+
+<ul>
+<li>git flow release start 1.0.0 という形でrelease branchを作成。</li>
+</ul></li>
+<li>release branchをorigin(upstream)に対しgit push</li>
+<li>staging環境上でgit fetch, (6)のbranchの更新内容を取得。git checkout -b branch-name release branchを行い、テストできる状態にする。
+
+<ul>
+<li>既にrelease branch向けのlocal branchを作成しているのであればgit pull release branchを行いlocal branchにmergeする。</li>
+</ul></li>
+<li>release branchについて動作チェック及びテストに問題がなければ、(5)で作成したrelease branchを閉じる。
+
+<ul>
+<li>git flow release finish 1.0.0</li>
+</ul></li>
+<li>1.0.0 のtagが作成される</li>
+<li>master, 1.0.0のtagをorigin(upstream)にpushする。</li>
+<li>production環境上でgit fetchを行い、git checkout -b tag-name tag-name を行なっておしまい。</li>
+</ol>
+
+<h2>hotfix(リリース後に見つかった急遽のバグ対応)を利用する場合</h2>
+
+<p>hotfix、つまりリリース直後に見つかった問題を即日対応したい場合のbranchをさくっと作りたい、名前考えてる場合じゃねえや、ってときに使います。</p>
+
+<ol>
+<li>git flow hotfix start 1.0.1 というbranchを作成します。
+
+<ul>
+<li>branchの名前は、修正を行うバージョンを対象にします。</li>
+<li><a href="http://semver.org/">semver.org</a>に準拠するなら、1.0.1とする。(patch version)
+
+<ul>
+<li>ただ、本当に細かい内容とかであるなら1.0.0aとかしたほうがいいかも。</li>
+<li>バージョンの付け方については一定であれば問題無いと思うし&hellip;</li>
+</ul></li>
+</ul></li>
+<li>hotfixで対応した内容をdevelopment環境、staging環境で動作チェック、及びテストを行う</li>
+<li>動作チェック、テストについて(2)で問題がでなければ、git flow hotfix finish 1.0.1 とし、hotfixを閉じる。</li>
+<li>1.0.1 のtagが作成されるので、git push origin master, git push origin 1.0.1 を行い、中央リポジトリにbranchをpushする</li>
+<li>production環境上でgit fetchを行い、git checkout -b 1.0.1 1.0.1 を行う</li>
+</ol>
+
+<h1>git flow をインストール</h1>
+
+<p>マシンにgitがインストールされていることを確認したら、
+<a href="https://github.com/nvie/gitflow">gitflow</a>のプロダクトページの
+<a href="https://github.com/nvie/gitflow/wiki/Linux">wikiページに掲載されているワンライナー</a>をコピーして、
+ターミナル上でペーストして実行します。</p>
+<pre class="highlight text">&gt; wget --no-check-certificate -q -O - https://raw.github.com/nvie/gitflow/develop/contrib/gitflow-installer.sh | sudo bash
+</pre>
+<p>これだけでインストールが完了します</p>
+
+<h1>git flow を既存のリポジトリに適用する</h1>
+
+<p>以下のコマンドを既存のリポジトリのディレクトリに移動して実行すればOK。
+develop, masterなどのbranchについてはgit flowで利用するデフォルトのbranch名を
+利用すれば良いのですが、prefixだけは&quot;v&quot;をつけるようにしておきましょう。
+git flow release start 1.0.0 -> git flow release finish 1.0.0とすると、
+v1.0.0と、release tagにprefixを付けてくれます。</p>
+<pre class="highlight text">&gt; cd product
+&gt; git flow init
+Which branch should be used for bringing forth production releases?
+   - master
+Branch name for production releases: [master] 
+Branch name for &quot;next release&quot; development: [develop] 
+
+How to name your supporting branch prefixes?
+Feature branches? [feature/] 
+Release branches? [release/] 
+Hotfix branches? [hotfix/] 
+Support branches? [support/] 
+Version tag prefix? [] v
+</pre>
+<p>以上でgit flowを利用できるようになります。</p>
+
+<p>中央リポジトリ(upstream)に対して、以下の形でdevelop, masterそれぞれの
+branchをpushしておきましょう。</p>
+<pre class="highlight text">&gt; git push origin develop
+&gt; git push origin master
+</pre>
+<p>あとは、release branchが作成したときとか、tag作成したときは都度、
+tagやbranch、developやmaster(tagポインタが参照しているから)各branchをpushしましょう。</p>
+
+<h1>チームメンバー間のコードリーディングについて</h1>
+
+<p>pull request戦略を取ると、リポジトリをメンバーごとにforkしなければならず、
+それはgithubのクラウド版(GoldとかSilverとか)でそれやると作成できる
+private repositoryの数を減らしまくることになるので、
+feature branchでupstreamに対してpushして対応することにしています。</p>
+
+<p>といってもまだ会社だと開発チーム小さく、ほぼ分業みたいなことになっているので
+mergeしてもらいたいからbranchを作成しpushするというより
+直接口で話して直してもらうことが多々あるのでfeature branch pushで
+会話をする回数は少ない感じです。</p>
+
+<h1>参考</h1>
+
+<ul>
+<li><a href="http://www.oreilly.co.jp/community/blog/2011/11/branch-model-with-git-flow.html">O&#39;reillyに掲載されているgit flowの使い方</a></li>
+</ul>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

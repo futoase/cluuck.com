@@ -1,0 +1,382 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - move ec2 instance to other region</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>EC2インスタンスを他のリージョンに移動したい</h1>
+
+<ul>
+<li>EBSを利用したEC2インスタンスを他リージョンに移動させるための手順がよくわからんのでまとめた。</li>
+</ul>
+
+<h2>作業手順</h2>
+
+<ol>
+<li><a href="http://aws.amazon.com/jp/s3/">S3 bucket</a>に現行のAMI(Amazon Machine Image)をアップロードする</li>
+<li>S3 bucketにイメージをアップロードした後、移行先でインスタンスを作成</li>
+<li>インスタンスの動作を確認できたら<a href="http://aws.amazon.com/jp/ebs/">EBS</a>をattachした形でインスタンスを起動できるようAMI(Amazon Machine Image)を作成する</li>
+<li>作成したAMIを元にインスタンスを作成する</li>
+<li>インスタンスの動作を確認して問題がなければ終わり</li>
+</ol>
+
+<h1>事前作業</h1>
+
+<p>注意点として、EC2インスタンスのデータ転送量はAWS内(リージョンが異なったとしても)以外でのやり取りでは<a href="http://aws.amazon.com/jp/ec2/#pricing">お金が無駄にかかると言う点</a>。そのため、EC2インスタンス内での作業を行うようにしている。</p>
+
+<ul>
+<li>セッション切れをおこなさないようにするためにServerAliveInterval設定をする</li>
+</ul>
+<pre class="highlight text">ServerAliveInterval 30
+</pre>
+<ul>
+<li>sshdの PermitRootLogin を yes にする</li>
+</ul>
+<pre class="highlight text">PermitRootLogin yes
+</pre>
+<ul>
+<li>X.509秘密鍵及び証明書、及びEC2インスタンス作成時に利用しているcert-ec2.pem(証明書)を用意しておく</li>
+</ul>
+
+<p></p>
+
+<h1>移動対象(移動元)のインスタンス内での作業</h1>
+
+<h2>AMIを作成する</h2>
+
+<ul>
+<li>作成時にアーキテクチャを問われるので適切なものを選択する</li>
+</ul>
+<pre class="highlight text">$ ec2-bundle-vol \
+&gt; -d /mnt \
+&gt; -k {秘密鍵} \
+&gt; -c {証明書} \
+&gt; -u {AWSアカウントUser ID}
+</pre>
+<ul>
+<li><a href="http://docs.amazonwebservices.com/AWSEC2/latest/CommandLineReference/CLTRG-ami-bundle-vol.html">ec2-bundole-volについて(公式ドキュメント)</a></li>
+</ul>
+
+<h2>移動先のリージョンで利用できるようにする</h2>
+
+<ul>
+<li>ec2-migrate-manifestを実行することで移動先リージョンで利用できるようにする</li>
+</ul>
+<pre class="highlight text">$ ec2-migrate-manifest \
+&gt; -k 秘密鍵 \
+&gt; -c 証明書 \
+&gt; --manifest /mnt/image.manifest.xml \
+&gt; --region &quot;移動先リージョン名&quot; \
+&gt; --access-key &quot;アクセスキー&quot; \
+&gt; --secret-key &quot;シークレットキー&quot;
+</pre>
+<ul>
+<li><p><a href="http://docs.amazonwebservices.com/AWSEC2/latest/CommandLineReference/CLTRG-ami-migrate-manifest.html">ec2-migrate-manifestについて(公式ドキュメント)</a></p></li>
+<li><p>作成が無事終了したら標準出力に以下の表示が出る</p></li>
+</ul>
+<pre class="highlight text">Successfully migrated /mnt/image.manifest.xml
+It is now suitable for use in {移動先のリージョン名}
+</pre>
+<h2>作業イメージをS3 bucketに対してアップロードを行う</h2>
+<pre class="highlight text">$ ec2-upload-bundle \
+&gt; -a {AWSアクセスキー} \
+&gt; -s {シークレットキー} \
+&gt; -b {アップロードを行うS3バケット名} \
+&gt; -d /mnt \
+&gt; -m /mnt/image.manifest.xml
+</pre>
+<ul>
+<li><a href="http://docs.amazonwebservices.com/AWSEC2/latest/CommandLineReference/CLTRG-ami-upload-bundle.html">ec2-upload-bundleについて(公式ドキュメント)</a></li>
+</ul>
+
+<h2>ec2-migrate-imageを実行する</h2>
+
+<ul>
+<li>S3 bucketにアップロードしたイメージについて他のリージョンで利用できるようにする</li>
+</ul>
+<pre class="highlight text">$ ec2-migrate-bundle \
+&gt; -k {秘密鍵} \
+&gt; -c {証明書} \
+&gt; -a {AWSアクセスキー} \
+&gt; -s {AWSシークレットキー} \
+&gt; --bucket {AMIをアップロードしたS3 bucket名} \
+&gt; --manifest &quot;image.manifest.xml&quot; \
+&gt; --location {アップロードを行うS3 bucketのregion(EU,USなど)}  \
+&gt; --region {EC2の移動先対象region} \
+&gt; --destination-bucket {移動先のregionで利用するAMIをアップロードするS3 bucket名}&quot;
+</pre>
+<ul>
+<li><a href="http://docs.amazonwebservices.com/AWSEC2/latest/CommandLineReference/CLTRG-ami-migrate-bundle.html">ec2-migrate-bundleについて(公式ドキュメント)</a></li>
+</ul>
+
+<h2>AMIを作成する</h2>
+
+<ul>
+<li>S3 bucketにアップロードしたAMIを使ってAMIを作成する</li>
+</ul>
+<pre class="highlight text">$ ec2-register 
+&gt; {ec2-migrate-bundleでアップロードしたbundle-imageのS3 bucket名}/image.manifest.xml \
+&gt; -K {秘密鍵} \
+&gt; -C {証明書} \
+&gt; --region {移動先対象リージョン}
+</pre>
+<ul>
+<li>AMI作成が移動先のregionにて正常に終了した場合、作成されたAMIのIDが表示される</li>
+</ul>
+<pre class="highlight text">IMAGE   ami-hogehoge
+</pre>
+<ul>
+<li><a href="http://docs.amazonwebservices.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-RegisterImage.html">ec2-registerについて(公式ドキュメント)</a></li>
+</ul>
+
+<h1>移動先regionでのAmazon Management Consoleで作業をする</h1>
+
+<ul>
+<li>作成したAMIを元にEC2の新規インスタンスを作成し、起動できるか確認を行う</li>
+<li>Amazon Management Consoleにて作成したAMIが存在することを確認する
+
+<ul>
+<li>移動先regionに切り替えて確認する</li>
+</ul></li>
+<li>AMIの存在を確認できたら、作成したAMIを元にEC2インスタンスを新規に作成する
+
+<ul>
+<li>AvailavilityZone(AZ)については、今後のEBSへのイメージ作成のために利用するので設定をきちんとしておくこと(適当に割り当てられても良いならそのままでよい&hellip;)</li>
+</ul></li>
+<li>instance storeという形でRoot Deviceが設定されているか確認する</li>
+<li>EC2インスタンスを作成し終え、Stateが&quot;running&quot;になっていることを確認できたら、ssh経由でサーバにログインが行えるか確認する。
+
+<ul>
+<li>ssh -i {EC2インスタンス作成時に利用した秘密鍵} root@{EC2インスタンスホスト名}</li>
+</ul></li>
+<li>新規作成したEC2インスタンスに対し、X.509の鍵ペア(秘密鍵,証明書)及びcert-ec2.pem(移動元のEC2インスタンス作成時に設定されるEC2証明書)をアップロードしておく</li>
+<li>root以外のユーザーでもログインが行えるよう、公開鍵を作成したEC2インスタンスに対してアップロードする。(authorized<em>keysとか&hellip;id</em>rsa.pubとかそんなの)</li>
+</ul>
+
+<h1>移動先regionで起動したEC2インスタンス内での作業</h1>
+
+<h2>EBSイメージの作成</h2>
+
+<ul>
+<li>インスタンスにログインを行い、EBSイメージを作成する</li>
+</ul>
+<pre class="highlight text">$ ec2-create-volume \
+&gt; --size 30 \ # 30GBで作成している
+&gt; --availability-zone {EC2インスタンスを作成したときに選択したavailability-zone} \
+&gt; --region {対象リージョン} \
+&gt; -K {秘密鍵} \
+&gt; -C {証明書}
+</pre>
+<ul>
+<li>作成が正常に終了したあと、作成したボリューム情報が表示される</li>
+</ul>
+<pre class="highlight text">VOLUME  vol-hogehoge    30              {region名}      creating        2012-03-01T00:01:35+0000
+</pre>
+<ul>
+<li><a href="http://docs.amazonwebservices.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-CreateVolume.html">ec2-create-volumeについて(公式ドキュメント)</a></li>
+</ul>
+
+<h2>EC2インスタンスに対してEBSボリュームをattachする</h2>
+
+<ul>
+<li>attachを行うことでEC2インスタンスがEBSを利用することができる</li>
+</ul>
+<pre class="highlight text">$ ec2-attach-volume {対象ボリューム名} \
+&gt; --instance {attachするインスタンス名} \
+&gt; -d {デバイス名} \
+&gt; --region {対象リージョン} \
+&gt; -K {秘密鍵} \
+&gt; -C {証明書}
+</pre>
+<ul>
+<li>attachが正常に終了したあと、EBSボリュームをEC2インスタンスにAttachした旨の情報が表示される</li>
+</ul>
+<pre class="highlight text">ATTACHMENT      vol-hogehoge    i-hugahuga      /dev/sdf       attaching      2012-03-01T00:04:03+0000 
+</pre>
+<ul>
+<li><a href="http://docs.amazonwebservices.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-AttachVolume.html">ec2-attach-volumeについて(公式ドキュメント)</a></li>
+</ul>
+
+<h3>attachする際に利用できるデバイス名について</h3>
+
+<ul>
+<li>指定できるデバイスについてはLinux/Unix系のインスタンスではsd[f-z][1-6]となっている
+
+<ul>
+<li><a href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/ebs-attaching-volume.html">ソース元</a></li>
+</ul></li>
+<li>/dev/sdfをattachするデバイスとして指定した場合、/dev/xvdfというデバイスでmappingが行われる
+
+<ul>
+<li>AWSそのものがXenを利用して構築されたサービスであり、Xen Virtual Storageによるデバイスマッピングが行われるため。</li>
+<li>/dev/xvd[f-z][1-6]にマッピングされる</li>
+</ul></li>
+</ul>
+
+<h2>attachされたEBSボリュームについてext3でフォーマットを行う</h2>
+<pre class="highlight text">$ mkfs.ext3 /dev/xvdf
+$ fsck /dev/xvdf # 念のため
+</pre>
+<h2>移行したEC2インスタンスのイメージを/mnt以下に作成する</h2>
+<pre class="highlight text">$ ec2-bundle-vol \
+&gt; -d /mnt \
+&gt; -k {秘密鍵} \
+&gt; -c {公開鍵} \
+&gt; -u {AWSのUserID} \
+&gt; --ec2cert {EC2インスタンス作成時に利用した証明書(cert-ec2.pem)}
+</pre>
+<h2>ec2-bundle-volの分割AMIを結合する</h2>
+<pre class="highlight text">$ mkdir -p /mnt/unbundle
+$ ec2-unbundle \
+&gt; -m /mnt/image.manifest.xml \
+&gt; -k {秘密鍵} \
+&gt; -s /mnt \ # source
+&gt; -d /mnt/unbundle #destination
+</pre>
+<ul>
+<li><a href="http://docs.amazonwebservices.com/AWSEC2/latest/CommandLineReference/CLTRG-ami-unbundle.html">ec2-unbundleについて(公式ドキュメント)</a></li>
+</ul>
+
+<h2>作成した結合AMIをattachしたEBSに対して書き込む</h2>
+
+<ul>
+<li>ddコマンドを利用してEBSイメージに対し書き込みを行う</li>
+</ul>
+<pre class="highlight text">$ dd if=/mnt/unbundle/image of=/dev/xvdf
+$ fsck /dev/xvdf # 念のため
+</pre>
+<h2>EBSボリュームのsnapshotを作成する</h2>
+
+<ul>
+<li>EBSイメージのsnapshotを作成し、インスタンス作成のためのAMIとして利用する</li>
+<li>snapshot作成にはかなり時間がかかる</li>
+</ul>
+<pre class="highlight text">$ ec2-create-snapshot \
+&gt; {/dev/xvdfとしてattachしたEBS ボリューム名} \
+&gt; --region {対象リージョン} \
+&gt; -K {秘密鍵} \
+&gt; -C {証明書}
+</pre>
+<ul>
+<li><a href="http://docs.amazonwebservices.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-CreateSnapshot.html">ec2-create-snapshotについて(公式ドキュメント)</a></li>
+</ul>
+
+<h2>snapshotからAMIを作成する</h2>
+
+<ul>
+<li>EC2インスタンスを作成するためのAMIを作成する</li>
+</ul>
+<pre class="highlight text">$ ec2-register \
+&gt; --snapshot {対象スナップショット名} \
+&gt; --description=&quot;snapshotの説明&quot; \
+&gt; --architecture {指定アーキテクチャ} \
+&gt; --root-device-name /dev/sda1 \
+&gt; --name &quot;AMI名称&quot; \
+&gt; --region {対象リージョン} \
+&gt; -K 秘密鍵 \
+&gt; -C 証明書 \
+&gt; --kernel {インスタンスで利用しているKernel ID(AKI)}
+</pre>
+<ul>
+<li>AMIの作成に成功するとAMI名が表示される</li>
+</ul>
+<pre class="highlight text">IMAGE   ami-hogehoge
+</pre>
+<h2>Amazon Manage ConsoleでEC2インスタンスを作成する</h2>
+
+<ul>
+<li>作成したAMIでEC2インスタンスを新規に作成する</li>
+<li>インスタンス作成後、ログインが行えることを確認する</li>
+<li>移動前に利用していたX.509の秘密鍵,証明書のペア及び移動前のEC2インスタンスで利用していた証明書(cert-ec2.pem)を新規作成したEC2インスタンスにアップロードする</li>
+</ul>
+
+<h1>EBSボリュームを拡張する</h1>
+
+<ul>
+<li>EC2インスタンスを作成後、rootボリュームは10GB分としてしか認識されていない。</li>
+<li>AMIを作成したインスタンス(S3 bucketにて作成したInstanceイメージ)のHDD容量のままになってしまうため。</li>
+<li>デバイスのファイルシステムサイズがシステム上でのマウントポイントでは利用されていないためだ。</li>
+<li><a href="http://linuxjm.sourceforge.jp/html/e2fsprogs/man8/resize2fs.8.html">resize2fs</a>によりマウントポイントをデバイスサイズと同容量のものにする。</li>
+</ul>
+<pre class="highlight text">$ df
+Filesystem           1K-ブロック    使用   使用可 使用% マウント位置
+/dev/xvda1            10321208   3900136   5896784  40% /
+tmpfs                   313260         8    313252   1% /lib/init/rw
+udev                    291840        28    291812   1% /dev
+tmpfs                   313260         4    313256   1% /dev/shm
+</pre>
+<ul>
+<li>resize2fsによりEBSボリュームのファイルシステムサイズとマウントポイントのサイズを合わせる</li>
+</ul>
+<pre class="highlight text">$ resize2fs /dev/xvda1
+
+resize2fs 1.41.12 (17-May-2010)
+Filesystem at /dev/xvda1 is mounted on /; on-line resizing required
+old desc_blocks = 1, new_desc_blocks = 2
+Performing an on-line resize of /dev/xvda1 to 7864320 (4k) blocks.
+The filesystem on /dev/xvda1 is now 7864320 blocks long.
+</pre><pre class="highlight text">$ df 
+
+/dev/xvda1            30963708   3905204  25485896  14% /
+tmpfs                   313260         8    313252   1% /lib/init/rw
+udev                    291840        28    291812   1% /dev
+tmpfs                   313260         4    313256   1% /dev/shm
+</pre>
+<ul>
+<li>resize2fsによってEBSボリュームのファイルサイズとマウントポイント(root)が一致するようになった</li>
+</ul>
+
+<h1>インスタンス移動終了後に気をつけておくべき点</h1>
+
+<ul>
+<li>EC2インスタンス作成時に利用していた鍵でログインを行うため、rootユーザでのログインを許容していた設定を修正する
+
+<ul>
+<li>/etc/ssh/sshd_configにあるPermitRootLogin yesをPermitRootLogin noにする</li>
+</ul></li>
+</ul>
+
+<h1>インスタンスが起動しない場合のトラブル</h1>
+
+<p>ec2-get-console-output {対象インスタンス名}を実行する。</p>
+
+<ul>
+<li><a href="http://docs.amazonwebservices.com/AWSEC2/latest/CommandLineReference/ApiReference-cmd-GetConsoleOutput.html">ec2-get-console-outputについて(公式ドキュメント)</a></li>
+</ul>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>

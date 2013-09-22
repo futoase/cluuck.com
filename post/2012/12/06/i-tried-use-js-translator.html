@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+
+  <title>Futoase development blog - I tried use js translator</title>
+  <link rel="stylesheet" href="/stylesheets/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/solarized-light.min.css" type="text/css" />
+  <link rel="stylesheet" href="/stylesheets/main.css" type="text/css" />
+
+</head>
+
+
+  <body>
+    <header>
+  <div>
+    <a class="title" href="/">futoase development blog.</a>
+    <span class="menu">
+      <ul>
+        <li><a href="/articles.html">articles</a></li>
+        <li><a href="/tags.html">tags</a></li>
+        <li><a href="/year.html">year</a></li>
+	<li><a href="/me.html">me</a></li>
+	<li><a href="/feed.xml">feed</a></li>
+      </ul> 
+    </span>
+  </div>
+</header>
+
+
+    <div id="container">
+      <div id="main" role="main">
+        <h1>沢山あるJavaScriptへのトランスレータ</h1>
+
+<p><a href="https://github.com/jashkenas/coffee-script">CoffeeScript</a>や、
+Microsoftが出した<a href="http://www.typescriptlang.org/">TypeScript</a>、
+Googleが出した<a href="http://www.dartlang.org/">Dart</a>、DeNAが出した<a href="http://jsx.github.com/">JSX</a>などなど、
+沢山のJavaScriptへのトランスレータ(テンプレート言語)があります。</p>
+
+<p>全部どのぐらい有るんだろう、ということについては把握していないんですが、
+この前Twitterのタイムラインで<a href="https://github.com/jashkenas/coffee-script/wiki/List-of-languages-that-compile-to-JS">List-of-languages-that-compile-to-JS</a>というCoffeeScript-github-repositoryのwikiにある記事へのリンクが流れていたので、
+色々あるんだなぁと感心しました。</p>
+
+<p></p>
+
+<h1>せっかくなので</h1>
+
+<p>個人的にいいんじゃないかな、って思ってるのがTypeScriptです。
+Microsoftが出している、というのが主な理由だったりします。</p>
+
+<h2>TypeScriptのインストール</h2>
+
+<p>インストールについては、node.jsのインストールが必要です。
+<a href="https://github.com/hokaccha/nodebrew">nodebrew</a>や<a href="http://mxcl.github.com/homebrew/">homebrew</a>を利用してnode.jsをインストールしましょう。
+node.jsをインストール後(敢えて古いバージョンを指定する人はいないと思いますが)、
+npmコマンドにて、TypeScriptをインストールします。</p>
+<pre class="highlight text">npm install typescript
+</pre>
+<p>以上で終了です。</p>
+
+<h2>node.jsのサンプルを書いてみる</h2>
+
+<p><a href="http://nodejs.org/">http://nodejs.org/</a>にある<a href="https://github.com/joyent/node/blob/v0.9.3/doc/index.html#L85">サーバーを書くサンプル</a>について、TypeScriptで書くと以下の形になります。</p>
+<pre class="highlight javascript"><span class="nx">declare</span> <span class="kd">function</span> <span class="nx">require</span><span class="p">(</span><span class="nx">name</span><span class="err">:</span> <span class="nx">string</span><span class="p">);</span>
+
+<span class="kr">interface</span> <span class="nx">Http</span> <span class="p">{</span>
+  <span class="nx">createServer</span><span class="p">(</span><span class="nl">callback</span><span class="p">:</span> <span class="p">(</span><span class="nl">req</span><span class="p">:</span> <span class="nx">Request</span><span class="p">,</span> <span class="nl">res</span><span class="p">:</span> <span class="nx">Response</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="nx">any</span><span class="p">)</span><span class="err">:</span> <span class="nx">CreateServer</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kr">interface</span> <span class="nx">CreateServer</span> <span class="p">{</span>
+  <span class="nx">listen</span><span class="p">(</span><span class="nx">port</span><span class="p">?:</span> <span class="nx">number</span><span class="p">,</span> <span class="nx">host</span><span class="p">?:</span> <span class="nx">string</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kr">interface</span> <span class="nx">Request</span> <span class="p">{</span>
+  <span class="na">url</span><span class="p">:</span> <span class="nx">string</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kr">interface</span> <span class="nx">Response</span> <span class="p">{</span>
+  <span class="nx">writeHead</span><span class="p">(</span><span class="nl">port</span><span class="p">:</span> <span class="nx">number</span><span class="p">,</span> <span class="nl">header</span><span class="p">:</span> <span class="nx">any</span><span class="p">);</span>
+  <span class="nx">end</span><span class="p">(</span><span class="nl">message</span><span class="p">:</span> <span class="nx">string</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">declare</span> <span class="kd">var</span> <span class="nx">http</span><span class="err">:</span> <span class="nx">Http</span><span class="p">;</span>
+
+<span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">);</span>
+
+<span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="err">:</span> <span class="nx">Request</span><span class="p">,</span> <span class="nx">res</span><span class="err">:</span> <span class="nx">Response</span><span class="p">){</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;path: &#39;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">);</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;Content-Type&#39;</span><span class="err">:</span> <span class="s1">&#39;text/plain&#39;</span><span class="p">});</span>
+  <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s1">&#39;Hello world&#39;</span><span class="p">);</span>
+<span class="p">}).</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">);</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Server running at http://127.0.0.1/&#39;</span><span class="p">)</span>
+</pre>
+<ul>
+<li>declare 構文により、他で既に定義されている関数である、と定義しています。</li>
+<li>interface 構文により、インターフェースが保持しているメソッドを定義しています。</li>
+<li>変数の宣言にもdeclare 構文を利用します。</li>
+<li>http.createServerの中で、自動引数に型(インターフェース)を定義しています。</li>
+</ul>
+
+<p>それほど違いはありません。
+server.tsというファイル名で保存した後、
+試しにコンパイル(JavaScriptに変換)してみましょう。</p>
+<pre class="highlight text">tsc server.ts
+</pre>
+<p>server.jsができるので、中身を確認しましょう。</p>
+<pre class="highlight javascript"><span class="nx">http</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;http&#39;</span><span class="p">);</span>
+<span class="nx">http</span><span class="p">.</span><span class="nx">createServer</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;path: &#39;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">url</span><span class="p">);</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">writeHead</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="p">{</span>
+        <span class="s1">&#39;Content-Type&#39;</span><span class="err">:</span> <span class="s1">&#39;text/plain&#39;</span>
+    <span class="p">});</span>
+    <span class="nx">res</span><span class="p">.</span><span class="nx">end</span><span class="p">(</span><span class="s1">&#39;Hello world&#39;</span><span class="p">);</span>
+<span class="p">}).</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="s1">&#39;127.0.0.1&#39;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Server runnning at http://127.0.0.1/&#39;</span><span class="p">);</span>
+</pre>
+<p>&hellip;きちんと変換されました。元に戻ってる感が&hellip;</p>
+
+<h1>JavaScriptへのトランステータについて</h1>
+
+<p>リリース・メンテは最後までされるのか、とか
+サポートしていない書き方があるとか、
+色々と思うことがあるのですが、</p>
+
+<ul>
+<li>2人以上の大規模なJavaScript開発プロダクトがある</li>
+</ul>
+
+<p>以上の点があるだけで、共通のフォーマットである
+テンプレート言語を利用することで、
+色々な書き方の流派があるJavaScriptに対する疲れが
+軽減されるだろうと考えています。ただ、本当に
+テンプレート言語については慎重にしないとまずいと思うわけで、
+結局トランスレートされたJavaScriptを面倒みることになるかも
+しれないわけで(パフォーマンスなどの問題が発生したら変換後のJavaScriptを見ざるを得なくなるし)、
+取り扱う人間の技量に合うかとか、
+そもそもJavaScriptと深く関わらないとこういった
+トランスレータには関われないというか、そんなものを感じます。</p>
+
+<p>プログラミングは難しい。</p>
+
+      </div>
+    </div>
+
+    <footer>
+  <div>futoase 2009-2013 (c)</div>
+</footer>
+
+  </body>
+</html>
